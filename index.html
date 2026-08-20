@@ -1,8 +1,13 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>North Nilachal Sporting Center</title>
 <style>
+#appPaid:disabled{opacity:.75;cursor:not-allowed;background:#f1f1f1;}
+
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#172033}header{background:linear-gradient(135deg,#0d3154,#1976d2);color:#fff;padding:18px;position:sticky;top:0;z-index:5}.head{max-width:1100px;margin:auto;display:flex;align-items:center;gap:14px}.logo{width:64px;height:64px;border-radius:50%;background:#fff;object-fit:cover;border:3px solid #f4b400}.brand h1{margin:0;font-size:23px}.brand small{opacity:.8}nav{max-width:1100px;margin:14px auto 0;display:flex;gap:7px;flex-wrap:wrap}nav button,.btn{border:0;border-radius:9px;padding:10px 13px;font-weight:700;cursor:pointer}nav button{background:#ffffff1b;color:#fff}nav button.active,nav button:hover{background:#fff;color:#123b66}.btn.primary{background:#1976d2;color:#fff}.btn.green{background:#159957;color:#fff}.btn.red{background:#d64545;color:#fff}.btn.light{background:#edf2f7;color:#223}
 main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.section.active{display:block}.card{background:#fff;border-radius:15px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px #0001}.birthday{border-left:5px solid #f4b400;background:#fff9df}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{font-size:14px;color:#6b7a8d}.stat b{display:block;font-size:28px;color:#172033;margin-top:5px}.toolbar{display:flex;gap:9px;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}.toolbar input{flex:1;min-width:220px}.input{padding:11px;border:1px solid #ccd5df;border-radius:8px;width:100%;margin-top:5px}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.photo{width:54px;height:54px;border-radius:50%;object-fit:cover;background:#e8eef5;display:grid;place-items:center;overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #edf0f4;text-align:left;white-space:nowrap}th{background:#f7f9fc;font-size:13px}.tablewrap{overflow:auto}.badge{padding:5px 8px;border-radius:20px;font-size:12px;font-weight:bold}.ok{background:#dcf7e8;color:#137a43}.due{background:#fff0d5;color:#946100}.exp{background:#ffe0e0;color:#a82f2f}.modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.box{background:#fff;border-radius:16px;padding:20px;width:min(520px,100%);max-height:90vh;overflow:auto}.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px}.hint{background:#eef6ff;padding:12px;border-radius:9px;color:#24537f;font-size:14px}
 @media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.full{grid-column:auto}.brand h1{font-size:18px}th,td{font-size:12px;padding:8px}}
+</style>
+<style id="voice-control-style">
+.voice-control{position:fixed;right:14px;bottom:18px;z-index:30;background:#fff;border-radius:14px;box-shadow:0 4px 18px #0003;padding:8px 10px;display:flex;align-items:center;gap:8px}.voice-btn{border:0;background:#173b63;color:#fff;border-radius:10px;width:42px;height:42px;font-size:20px;cursor:pointer}.voice-slider{width:90px;accent-color:#173b63}.voice-status{font-size:11px;color:#52606d;min-width:42px;text-align:center}@media(max-width:760px){.voice-control{right:10px;bottom:10px;padding:6px}.voice-slider{width:65px}}
 </style>
 <style>
 /* Fast first paint: don't block opening on remote data. */
@@ -45,6 +50,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
     </div>
   </div>
 </div>
+<audio id="siteVoice" preload="auto"></audio>
 
 <section id="home" class="section active"><div id="loadingNotice" class="card hint" style="display:none;text-align:center;font-weight:700">⏳ Member details are loading…</div><div id="birthdayTop"></div><div class="grid"><div class="card stat">Total Members<b id="total">0</b></div><div class="card stat">Birthdays Today<b id="today">0</b></div><div class="card stat">Renewal Due<b id="due">0</b></div><div class="card stat">Expired<b id="expired">0</b></div></div><div class="card"><h2>🎂 Today’s Birthdays</h2><div id="birthList"></div></div></section>
 <section id="members" class="section"><div class="toolbar"><input id="search" class="input" placeholder="Name/Mobile দিয়ে খুঁজুন"><button id="addBtn" class="btn primary" style="display:none">+ Add Member</button></div><div class="card tablewrap"><table><thead><tr><th>Photo</th><th>Member ID</th><th>Member Type</th><th>Name</th><th>Gender</th><th>Blood Group</th><th id="dobHead">Date of Birth</th><th id="feeHead" style="display:none">Fee</th><th>Payment Date</th><th>Validity</th><th>Aadhaar (Last 4)</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div></section>
@@ -62,7 +68,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
       <label>Membership Plan *
         <select id="appFee" class="input"><option value="100">₹100 — 1 Month</option><option value="200">₹200 — 2 Months</option><option value="300">₹300 — 3 Months</option><option value="400">₹400 — 4 Months</option><option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option></select>
       </label>
-      <label>Payment Date *<input id="appPaid" class="input" type="date" required></label>
+      <label>Payment Date *<input id="appPaid" class="input" type="date" required disabled></label>
       <label>Membership Payment * 
         <select id="appPaymentPlan" class="input">
           <option value="100">₹100 — 1 Month</option>
@@ -82,7 +88,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
     </form>
   </div>
 </section>
-<section id="admin" class="section"><div class="card"><h2>🔐 Admin Settings</h2><div class="hint">Only the Admin can make changes here. Others can only view.</div><form id="settings" class="form" style="margin-top:15px"><label>ক্লাবের Name<input id="clubName" class="input" required></label><label>Registration Number<input id="regNumber" class="input" value="S/1L/81249" required></label><label class="full">Scrolling Notice<input id="scrollNotice" class="input" placeholder="এখানে চলমান নোটিশ লিখুন"></label><label>New Password<input id="newPass" class="input" type="password" placeholder="Enter only if you want to change it"></label><label class="full">Logo<input id="logoFile" class="input" type="file" accept="image/*"><img id="logoPreview" class="photo" style="width:90px;height:90px;margin-top:6px"></label><div class="full actions"><button type="submit" class="btn primary">Save Settings</button><button type="button" id="logout" class="btn light">Logout</button></div></form></div>
+<section id="admin" class="section"><div class="card"><h2>🔐 Admin Settings</h2><div class="hint">Only the Admin can make changes here. Others can only view.</div><form id="settings" class="form" style="margin-top:15px"><label>ক্লাবের Name<input id="clubName" class="input" required></label><label>Registration Number<input id="regNumber" class="input" value="S/1L/81249" required></label><label class="full">Scrolling Notice<input id="scrollNotice" class="input" placeholder="এখানে চলমান নোটিশ লিখুন"></label><label>New Password<input id="newPass" class="input" type="password" placeholder="Enter only if you want to change it"></label><label class="full">Logo<input id="logoFile" class="input" type="file" accept="image/*"><img id="logoPreview" class="photo" style="width:90px;height:90px;margin-top:6px"></label><label class="full">🎙️ Voice-over / Welcome Audio<input id="voiceFile" class="input" type="file" accept="audio/*"><small style="display:block;color:#667;margin-top:5px">Admin এখান থেকে যেকোনো সময় নতুন MP3/Audio বদলাতে পারবেন। Save Settings চাপলে নতুন Voice-over সবার জন্য চালু হবে।</small><audio id="voiceAdminPreview" controls style="width:100%;margin-top:8px;display:none"></audio></label><label>🎚️ Voice-over Volume<input id="voiceVolumeAdmin" class="input" type="range" min="0" max="100" step="5" value="80"><small id="voiceVolumeAdminText" style="display:block;color:#667;margin-top:5px">80% — এই ভলিউমেই সবার কাছে Voice-over চলবে।</small></label><div class="full actions"><button type="submit" class="btn primary">Save Settings</button><button type="button" id="logout" class="btn light">Logout</button></div></form></div>
 
 <div class="card">
   <h2>📋 Pending Membership Applications <span id="pendingCount" class="badge due">0</span></h2>
@@ -144,7 +150,7 @@ const REST_BASE=SUPABASE_URL+'/rest/v1';
 
 let members=[];
 let applications=[];
-let settings={name:'North Nilachal Sporting Center',reg:'S/1L/81249',logo:'',pass:'1234',notice:'নর্থ নীলাচল স্পোটিং সেন্টারের সকল সদস্যকে মেম্বারশিপের তথ্য যাচাই ও সময়মতো মেম্বারশিপ নবীকরণ করার জন্য অনুরোধ করা হচ্ছে।'};
+let settings={name:'North Nilachal Sporting Center',reg:'S/1L/81249',logo:'',voice:'',voiceVolume:0.8,pass:'1234',notice:'নর্থ নীলাচল স্পোটিং সেন্টারের সকল সদস্যকে মেম্বারশিপের তথ্য যাচাই ও সময়মতো মেম্বারশিপ নবীকরণ করার জন্য অনুরোধ করা হচ্ছে।'};
 let admin=false,logoData='',memberPhoto='',appPhotoData='',renewId='',paymentId='';
 
 const $=x=>document.getElementById(x);
@@ -193,11 +199,21 @@ function showError(msg){
 function clearError(){const x=$('appError');if(x)x.style.display='none'}
 
 function iso(d){return new Date(d).toISOString().slice(0,10)}
-function todayISO(){return new Date().toISOString().slice(0,10)}
+function todayISO(){
+  // Use the device's local calendar date (not UTC), so India/other timezones
+  // always get today's actual date.
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
 function setDefaultPaymentDates(){
   const d=todayISO();
-  if($('appPaid') && !$('appPaid').value) $('appPaid').value=d;
-  if($('paid') && !$('paid').value) $('paid').value=d;
+  // New membership application: always start with today's date.
+  if($('appPaid')) $('appPaid').value=d;
+  // Admin's New Member form also starts with today's date.
+  if($('paid') && !$('eid').value) $('paid').value=d;
 }
 function addMonths(d,months){
   // Calculate validity from the Payment Date using calendar months.
@@ -386,7 +402,41 @@ async function nextMemberIdFresh(type='regular'){
   return nextMemberId(type);
 }
 
+function unpackMediaSettings(){
+  const raw=String(settings.logo||'');
+  if(raw.startsWith('{') && raw.includes('"__nnsc_media"')){
+    try{
+      const b=JSON.parse(raw);
+      if(b.__nnsc_media){settings.logo=b.logo||'';settings.voice=b.voice||'';settings.voiceVolume=(typeof b.voiceVolume==='number'?Math.max(0,Math.min(1,b.voiceVolume)):0.8);}
+    }catch(e){console.warn('Media settings decode skipped:',e.message)}
+  }
+}
+function packMediaSettings(){
+  return JSON.stringify({__nnsc_media:1,logo:settings.logo||'',voice:settings.voice||'',voiceVolume:(typeof settings.voiceVolume==='number'?Math.max(0,Math.min(1,settings.voiceVolume)):0.8)});
+}
+function applyVoice(){
+  const a=$('siteVoice'); if(!a)return;
+  const src=settings.voice||'';
+  if(src && a.src!==src){a.src=src; a.load();}
+  const vol=(typeof settings.voiceVolume==='number'?Math.max(0,Math.min(1,settings.voiceVolume)):0.8);
+  a.volume=vol; a.muted=vol===0;
+  if($('voiceVolumeAdmin')){
+    $('voiceVolumeAdmin').value=String(Math.round(vol*100));
+    $('voiceVolumeAdminText').textContent=Math.round(vol*100)+'% — এই ভলিউমেই সবার কাছে Voice-over চলবে।';
+  }
+  if(src && vol>0){
+    const play=a.play(); if(play&&play.catch)play.catch(()=>{});
+  }
+}
+$('voiceVolumeAdmin').oninput=e=>{
+  const v=Math.max(0,Math.min(100,Number(e.target.value)||0));
+  settings.voiceVolume=v/100;
+  $('voiceVolumeAdminText').textContent=v+'% — এই ভলিউমেই সবার কাছে Voice-over চলবে।';
+};
+function initVoiceControls(){const a=$('siteVoice'); if(!a)return; a.addEventListener('ended',()=>{}); document.addEventListener('click',()=>{if(settings.voice && settings.voiceVolume>0 && a.paused){a.play().catch(()=>{})}},{once:true});}
+
 function apply(){
+  unpackMediaSettings();
   $('siteName').textContent=settings.name||'North Nilachal Sporting Center';
   document.title=settings.name||'North Nilachal Sporting Center';
   $('regNo').textContent='Registration No.: '+(settings.reg||'S/1L/81249');
@@ -399,6 +449,7 @@ function apply(){
     $('scrollNoticeText').textContent=noticeText||'';
     $('scrollNoticeText').style.display=noticeText?'inline-block':'none';
   }
+  applyVoice();
   if(admin){
     $('clubName').value=settings.name||'North Nilachal Sporting Center';
     $('regNumber').value=settings.reg||'S/1L/81249';
@@ -569,6 +620,7 @@ async function loadData(){
 
   const settingsPromise=rest('/settings?id=eq.1&select=*&limit=1').then(s=>{
     if(Array.isArray(s)&&s[0])settings={...settings,...s[0]};
+    unpackMediaSettings();
     loadLocalNotice();
     apply(); saveFastCache();
   }).catch(e=>{
@@ -689,6 +741,9 @@ $('appPaymentPlan').onchange=()=>{
 };
 
 $('appPayNow').onclick=()=>{
+  // Payment Date always defaults to the actual day the payment is started.
+  if($('appPaid')) $('appPaid').value=todayISO();
+  if($('appPaid')) $('appPaid').disabled=true;
   const amount=Number($('appPaymentPlan').value||0);
   if(amount<100)return alert('Minimum membership payment ₹100 করতে হবে');
   const upi='upi://pay?pa='+encodeURIComponent(MEMBERSHIP_UPI_ID)+'&pn='+encodeURIComponent('North Nilachal Sporting Center')+'&am='+encodeURIComponent(amount.toFixed(2))+'&cu=INR&tn='+encodeURIComponent('North Nilachal Membership Application');
@@ -714,7 +769,10 @@ $('applicationForm').onsubmit=async e=>{
   const payload={name:$('appName').value.trim(),phone:$('appPhone').value.trim(),aadhaar:a,dob:$('appDob').value,blood:$('appBlood').value,fee:paymentAmount,paid:($('appPaid').value||todayISO()),address:$('appAddress').value.trim(),photo:appPhotoData,status:'pending',transaction_id:txn,payment_time:(window.appPaymentTime||new Date().toISOString()),member_id:existingMemberId};
   try{
     await rest('/membership_applications',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(payload)});
-    $('applicationForm').reset();appPhotoData='';window.appPaymentStarted=false;window.appPaymentTime='';sessionStorage.removeItem('nnsc_app_payment_time');
+    $('applicationForm').reset();
+    // After reset, restore today's date instead of leaving an old browser/form date.
+    setDefaultPaymentDates();
+    appPhotoData='';window.appPaymentStarted=false;window.appPaymentTime='';sessionStorage.removeItem('nnsc_app_payment_time');
 $('appPaymentStatus').textContent='Payment না করা পর্যন্ত Submit করা যাবে না। Minimum payment ₹100.';$('appPaymentStatus').style.color='#a82f2f';$('appPhotoPreview').removeAttribute('src');
     alert('Membership form submitted successfully. এটি Pending অবস্থায় Admin-এর কাছে গেছে। Verification ও Approval-এর পরে Member ID তৈরি হবে.');
     if(admin) await loadApplications();
@@ -726,7 +784,8 @@ $('addBtn').onclick=()=>{if(admin){resetForm();openTab('add')}};
 function resetForm(){
   $('memberForm').reset();$('eid').value='';memberPhoto='';$('memberPreview').src='';
   $('formTitle').textContent='New Member';$('memberType').value='regular';
-  $('memberId').value=nextMemberId('regular');$('paid').value='';
+  $('memberId').value=nextMemberId('regular');$('paid').value=todayISO();
+  // Payment Date defaults to today's date for a new member record.
   // Preview the latest serial when possible; final Save does a fresh database check.
   nextMemberIdFresh('regular').then(id=>{
     if(!$('eid').value) $('memberId').value=id;
@@ -874,6 +933,10 @@ $('logoFile').onchange=e=>{
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();r.onload=()=>{logoData=r.result;settings.logo=logoData;$('logoPreview').src=logoData;$('logoPreview').style.display='block'};r.readAsDataURL(f);
 };
+$('voiceFile').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>{settings.voice=r.result;$('voiceAdminPreview').src=settings.voice;$('voiceAdminPreview').style.display='block'};r.readAsDataURL(f);
+};
 $('settings').onsubmit=async e=>{
   e.preventDefault();if(!admin)return;
   settings.name=$('clubName').value.trim()||settings.name;
@@ -881,15 +944,19 @@ $('settings').onsubmit=async e=>{
   settings.notice=$('scrollNotice').value.trim();
   if($('newPass').value)settings.pass=$('newPass').value;
   settings.logo=logoData||settings.logo;
+  settings.voiceVolume=Math.max(0,Math.min(1,Number($('voiceVolumeAdmin').value||80)/100));
   try{
+    unpackMediaSettings();
     // Save only columns that exist in the current settings table.
     // Notice is saved separately in localStorage so this never fails because
     // the database has no `notice` column.
-    const dbSettings={id:1,name:settings.name,reg:settings.reg,logo:settings.logo,pass:settings.pass};
+    const dbSettings={id:1,name:settings.name,reg:settings.reg,logo:packMediaSettings(),pass:settings.pass};
     await rest('/settings?on_conflict=id',{method:'POST',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(dbSettings)});
     saveLocalNotice();
     saveFastCache();
-    apply();alert('Settings saved');
+    apply();
+    if($('voiceAdminPreview') && settings.voice){$('voiceAdminPreview').src=settings.voice;$('voiceAdminPreview').style.display='block';}
+    alert('Settings saved');
   }catch(e){
     const msg=String(e.message||e);
     alert('Settings save failed: '+msg);
@@ -957,5 +1024,6 @@ window.addEventListener('error',e=>console.error(e.error||e.message));
 openTab('home');
 loadFastCache();
 apply();
+initVoiceControls();
 loadData();
 </script></body></html>
