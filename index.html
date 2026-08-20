@@ -85,8 +85,8 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 <div class="card">
   <h2>📋 Pending Membership Applications <span id="pendingCount" class="badge due">0</span></h2>
   <div class="tablewrap">
-    <table><thead><tr><th>Name</th><th>Mobile</th><th>Plan</th><th>Payment Date</th><th>Submitted</th><th>Action</th></tr></thead>
-    <tbody id="applicationRows"><tr><td colspan="6">No pending applications.</td></tr></tbody></table>
+    <table><thead><tr><th>Name</th><th>Mobile</th><th>Plan</th><th>UTR</th><th>Payment Time</th><th>Payment Date</th><th>Submitted</th><th>Action</th></tr></thead>
+    <tbody id="applicationRows"><tr><td colspan="8">No pending applications.</td></tr></tbody></table>
   </div>
 </div>
 
@@ -229,7 +229,7 @@ function validityDate(m){
   return addMonths(paid,months);
 }
 function fmt(d){return d?new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—'}
-function fmtMonthYear(d){return d?new Date(d+'T00:00:00').toLocaleDateString('en-IN',{month:'long',year:'numeric'}):'—'}
+function fmtDateTime(d){return d?new Date(d).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}):'—'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function st(m){
   let e=validityDate(m),t=iso(today);
@@ -425,7 +425,7 @@ function rows(){
         '</small></td>'+
       '<td><b>'+esc(m.gender||'Male')+'</b></td><td><b>'+esc(m.blood||'—')+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+fmt(m.dob)+'</td>'+
       '<td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td><td>'+fmt(m.paid)+'</td>'+
-      '<td>'+ (validityDate(m)?fmtMonthYear(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
+      '<td>'+ (validityDate(m)?fmt(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
       '<td>XXXX-XXXX-'+esc(String(m.aadhaar||'').slice(-4)||'—')+'</td><td><span class="badge '+s[0]+'">'+s[1]+'</span></td>'+
       '<td>'+ (admin?'<button class="btn light" onclick="editM(\''+m.id+'\')">Edit</button> <button class="btn green" onclick="openR(\''+m.id+'\')">Renew</button> <button class="btn red" onclick="delM(\''+m.id+'\')">Delete</button>': ((s[0]==='due'||s[0]==='exp')?'<button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 '+(s[0]==='due'?'Renew Membership':'Pay Membership')+'</button>':(s[0]==='ok'?'<span class="badge ok">Active</span>':'—')))+'</td></tr>';
   }).join(''):'<tr><td colspan="13">No members found.</td></tr>';
@@ -562,7 +562,7 @@ async function loadData(){
 
 async function loadApplications(){
   try{
-    const data=await rest('/membership_applications?select=id,name,phone,aadhaar,dob,blood,fee,paid,address,photo,status,member_id,transaction_id,created_at&order=created_at.desc');
+    const data=await rest('/membership_applications?select=id,name,phone,aadhaar,dob,blood,fee,paid,address,photo,status,member_id,transaction_id,payment_time,created_at&order=created_at.desc');
     applications=Array.isArray(data)?data:[];
     renderApplications();
   }catch(e){
@@ -576,7 +576,7 @@ async function loadApplications(){
 function renderApplications(){
   const pending=applications.filter(a=>(a.status||'pending')==='pending');
   $('pendingCount').textContent=pending.length;
-  $('applicationRows').innerHTML=pending.length?pending.map(a=>'<tr><td><b>'+esc(a.name)+'</b></td><td>'+esc(a.phone||'—')+'</td><td>₹'+Number(a.fee||0)+' ('+validityMonths(a)+' মাস)</td><td>'+esc(a.transaction_id||'—')+'</td><td>'+fmt(a.paid)+'</td><td>'+ (a.created_at?fmt(a.created_at.slice(0,10)):'—')+'</td><td><button class="btn green" onclick="approveApplication(\''+a.id+'\')">Verify & Approve</button> <button class="btn red" onclick="rejectApplication(\''+a.id+'\')">Reject</button></td></tr>').join(''):'<tr><td colspan="7">No pending applications.</td></tr>';
+  $('applicationRows').innerHTML=pending.length?pending.map(a=>'<tr><td><b>'+esc(a.name)+'</b></td><td>'+esc(a.phone||'—')+'</td><td>₹'+Number(a.fee||0)+' ('+validityMonths(a)+' মাস)</td><td>'+esc(a.transaction_id||'—')+'</td><td>'+fmtDateTime(a.payment_time)+'</td><td>'+fmt(a.paid)+'</td><td>'+ (a.created_at?fmtDateTime(a.created_at):'—')+'</td><td><button class="btn green" onclick="approveApplication(\''+a.id+'\')">Verify & Approve</button> <button class="btn red" onclick="rejectApplication(\''+a.id+'\')">Reject</button></td></tr>').join(''):'<tr><td colspan="8">No pending applications.</td></tr>';
 }
 
 window.approveApplication=async id=>{
@@ -603,7 +603,7 @@ window.approveApplication=async id=>{
       'Member: '+(a.name||m.name)+'\\n'+
       'Amount: ₹'+fee+' = '+months+' মাস\\n'+
       'UTR: '+txn+'\\n\\n'+
-      'New validity: '+fmtMonthYear(base)+' to '+fmtMonthYear(newEnd)
+      'New validity: '+fmt(base)+' to '+fmt(newEnd)
     ))return;
 
     try{
@@ -658,6 +658,7 @@ $('appPhoto').onchange=e=>{
   const r=new FileReader();r.onload=()=>{appPhotoData=r.result;$('appPhotoPreview').src=appPhotoData};r.readAsDataURL(f);
 };
 window.appPaymentStarted=false;
+window.appPaymentTime=sessionStorage.getItem('nnsc_app_payment_time')||'';
 $('appFee').onchange=()=>{
   if($('appPaymentPlan')) $('appPaymentPlan').value=$('appFee').value;
 };
@@ -670,6 +671,8 @@ $('appPayNow').onclick=()=>{
   if(amount<100)return alert('Minimum membership payment ₹100 করতে হবে');
   const upi='upi://pay?pa='+encodeURIComponent(MEMBERSHIP_UPI_ID)+'&pn='+encodeURIComponent('North Nilachal Sporting Center')+'&am='+encodeURIComponent(amount.toFixed(2))+'&cu=INR&tn='+encodeURIComponent('North Nilachal Membership Application');
   window.appPaymentStarted=true;
+  window.appPaymentTime=new Date().toISOString();
+  sessionStorage.setItem('nnsc_app_payment_time',window.appPaymentTime);
   $('appPaymentStatus').textContent='Payment app খুলছে। Payment সম্পূর্ণ করার পরে Transaction ID / UTR দিন।';
   $('appPaymentStatus').style.color='#137a43';
   window.location.href=upi;
@@ -686,10 +689,11 @@ $('applicationForm').onsubmit=async e=>{
   if(!window.appPaymentStarted)return alert('প্রথমে Pay Now চাপুন এবং payment সম্পূর্ণ করুন');
   if(!txn)return alert('Payment Transaction ID / UTR অবশ্যই দিতে হবে');
   const existingMemberId=String(window.applicationMemberId||'').trim()||null;
-  const payload={name:$('appName').value.trim(),phone:$('appPhone').value.trim(),aadhaar:a,dob:$('appDob').value,blood:$('appBlood').value,fee:paymentAmount,paid:($('appPaid').value||todayISO()),address:$('appAddress').value.trim(),photo:appPhotoData,status:'pending',transaction_id:txn,member_id:existingMemberId};
+  const payload={name:$('appName').value.trim(),phone:$('appPhone').value.trim(),aadhaar:a,dob:$('appDob').value,blood:$('appBlood').value,fee:paymentAmount,paid:($('appPaid').value||todayISO()),address:$('appAddress').value.trim(),photo:appPhotoData,status:'pending',transaction_id:txn,payment_time:(window.appPaymentTime||new Date().toISOString()),member_id:existingMemberId};
   try{
     await rest('/membership_applications',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(payload)});
-    $('applicationForm').reset();appPhotoData='';window.appPaymentStarted=false;$('appPaymentStatus').textContent='Payment না করা পর্যন্ত Submit করা যাবে না। Minimum payment ₹100.';$('appPaymentStatus').style.color='#a82f2f';$('appPhotoPreview').removeAttribute('src');
+    $('applicationForm').reset();appPhotoData='';window.appPaymentStarted=false;window.appPaymentTime='';sessionStorage.removeItem('nnsc_app_payment_time');
+$('appPaymentStatus').textContent='Payment না করা পর্যন্ত Submit করা যাবে না। Minimum payment ₹100.';$('appPaymentStatus').style.color='#a82f2f';$('appPhotoPreview').removeAttribute('src');
     alert('Membership form submitted successfully. এটি Pending অবস্থায় Admin-এর কাছে গেছে। Verification ও Approval-এর পরে Member ID তৈরি হবে.');
     if(admin) await loadApplications();
     openTab('home');
@@ -790,8 +794,9 @@ window.openPayment=id=>{
   $('paymentText').innerHTML='<b>'+esc(m.name)+'</b><br>Current status: '+esc(st(m)[1])+'<br>Choose the amount you want to pay.';
   $('paymentPlan').value='100';
   $('paymentTxn').value='';
+  window.paymentTime='';
   $('paymentBackdateInfo').innerHTML=end
-    ? '📅 এই membership-এর আগের validity শেষ হয়েছে <b>'+fmtMonthYear(end)+'</b>। নতুন payment করলে নতুন validity শুরু হবে <b>'+fmtMonthYear(expiredStart)+'</b> থেকে।'
+    ? '📅 এই membership-এর আগের validity শেষ হয়েছে <b>'+fmt(end)+'</b>। নতুন payment করলে নতুন validity শুরু হবে <b>'+fmt(expiredStart)+'</b> থেকে।'
     : '📅 পুরনো validity পাওয়া না গেলে নতুন validity আজকের তারিখ থেকে শুরু হবে।';
   $('payment').classList.add('show');
 };
@@ -800,6 +805,8 @@ $('payNow').onclick=()=>{
   const amount=Number($('paymentPlan').value||100),m=members.find(x=>x.id===paymentId);if(!m)return;
   const note='North Nilachal Membership - '+m.name;
   const upi='upi://pay?pa='+encodeURIComponent(MEMBERSHIP_UPI_ID)+'&pn='+encodeURIComponent('North Nilachal Sporting Center')+'&am='+encodeURIComponent(amount.toFixed(2))+'&cu=INR&tn='+encodeURIComponent(note);
+  window.paymentTime=new Date().toISOString();
+  sessionStorage.setItem('nnsc_payment_time',window.paymentTime);
   window.location.href=upi;
 };
 $('confirmPayment').onclick=async()=>{
@@ -807,6 +814,7 @@ $('confirmPayment').onclick=async()=>{
   if(!m)return;
   const fee=Number($('paymentPlan').value||100);
   const txn=$('paymentTxn').value.trim();
+  const paymentTime=window.paymentTime||sessionStorage.getItem('nnsc_payment_time')||new Date().toISOString();
   if(fee<100)return alert('Minimum membership payment ₹100 করতে হবে');
   if(!txn)return alert('Payment Transaction ID / UTR দিন');
   if(!confirm('Payment submit করে Admin verification-এর জন্য পাঠাবেন?\\n\\nValidity এখন পরিবর্তন হবে না। Admin payment verify & approve করার পরই validity বাড়বে.'))return;
@@ -824,7 +832,8 @@ $('confirmPayment').onclick=async()=>{
       photo:m.photo||'',
       status:'pending',
       member_id:m.id,
-      transaction_id:txn
+      transaction_id:txn,
+      payment_time:paymentTime
     };
     await rest('/membership_applications',{
       method:'POST',
@@ -832,6 +841,7 @@ $('confirmPayment').onclick=async()=>{
       body:JSON.stringify(payload)
     });
     $('payment').classList.remove('show');
+    window.paymentTime='';sessionStorage.removeItem('nnsc_payment_time');
     if(admin) await loadApplications();
     alert('✅ Payment submitted for Admin verification.\\nAmount: ₹'+fee+'\\nUTR: '+txn+'\\n\\nAdmin payment verify & approve করার পরই validity update হবে.');
   }catch(e){alert('Payment submission failed: '+e.message)}
@@ -873,7 +883,7 @@ function buildAllMemberForms(){
     const dob=fmt(m.dob);
     const fee=Number(m.fee||0);
     const paid=fmt(m.paid);
-    const valid=fmtMonthYear(validityDate(m));
+    const valid=fmt(validityDate(m));
     const status=st(m)[1];
     const photo=m.photo?'<img src="'+esc(m.photo)+'" style="width:100px;height:100px;object-fit:cover;border:1px solid #999">':'<div style="width:100px;height:100px;border:1px solid #999;display:grid;place-items:center">Photo</div>';
     return `<div class="member-form-page">
