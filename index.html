@@ -229,6 +229,7 @@ function validityDate(m){
   return addMonths(paid,months);
 }
 function fmt(d){return d?new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—'}
+function fmtMonthYear(d){return d?new Date(d+'T00:00:00').toLocaleDateString('en-IN',{month:'long',year:'numeric'}):'—'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function st(m){
   let e=validityDate(m),t=iso(today);
@@ -424,7 +425,7 @@ function rows(){
         '</small></td>'+
       '<td><b>'+esc(m.gender||'Male')+'</b></td><td><b>'+esc(m.blood||'—')+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+fmt(m.dob)+'</td>'+
       '<td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td><td>'+fmt(m.paid)+'</td>'+
-      '<td>'+ (validityDate(m)?fmt(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
+      '<td>'+ (validityDate(m)?fmtMonthYear(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
       '<td>XXXX-XXXX-'+esc(String(m.aadhaar||'').slice(-4)||'—')+'</td><td><span class="badge '+s[0]+'">'+s[1]+'</span></td>'+
       '<td>'+ (admin?'<button class="btn light" onclick="editM(\''+m.id+'\')">Edit</button> <button class="btn green" onclick="openR(\''+m.id+'\')">Renew</button> <button class="btn red" onclick="delM(\''+m.id+'\')">Delete</button>': ((s[0]==='due'||s[0]==='exp')?'<button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 '+(s[0]==='due'?'Renew Membership':'Pay Membership')+'</button>':(s[0]==='ok'?'<span class="badge ok">Active</span>':'—')))+'</td></tr>';
   }).join(''):'<tr><td colspan="13">No members found.</td></tr>';
@@ -602,7 +603,7 @@ window.approveApplication=async id=>{
       'Member: '+(a.name||m.name)+'\\n'+
       'Amount: ₹'+fee+' = '+months+' মাস\\n'+
       'UTR: '+txn+'\\n\\n'+
-      'New validity: '+fmt(base)+' to '+fmt(newEnd)
+      'New validity: '+fmtMonthYear(base)+' to '+fmtMonthYear(newEnd)
     ))return;
 
     try{
@@ -790,7 +791,7 @@ window.openPayment=id=>{
   $('paymentPlan').value='100';
   $('paymentTxn').value='';
   $('paymentBackdateInfo').innerHTML=end
-    ? '📅 এই membership-এর আগের validity শেষ হয়েছে <b>'+fmt(end)+'</b>। নতুন payment করলে নতুন validity শুরু হবে <b>'+fmt(expiredStart)+'</b> থেকে।'
+    ? '📅 এই membership-এর আগের validity শেষ হয়েছে <b>'+fmtMonthYear(end)+'</b>। নতুন payment করলে নতুন validity শুরু হবে <b>'+fmtMonthYear(expiredStart)+'</b> থেকে।'
     : '📅 পুরনো validity পাওয়া না গেলে নতুন validity আজকের তারিখ থেকে শুরু হবে।';
   $('payment').classList.add('show');
 };
@@ -872,7 +873,7 @@ function buildAllMemberForms(){
     const dob=fmt(m.dob);
     const fee=Number(m.fee||0);
     const paid=fmt(m.paid);
-    const valid=fmt(validityDate(m));
+    const valid=fmtMonthYear(validityDate(m));
     const status=st(m)[1];
     const photo=m.photo?'<img src="'+esc(m.photo)+'" style="width:100px;height:100px;object-fit:cover;border:1px solid #999">':'<div style="width:100px;height:100px;border:1px solid #999;display:grid;place-items:center">Photo</div>';
     return `<div class="member-form-page">
