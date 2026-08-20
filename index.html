@@ -157,14 +157,14 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
     </select>
   </label>
   <div id="paymentBackdateInfo" class="hint" style="margin-top:10px"></div>
-  <div class="hint" style="margin-top:10px">প্রথমে Pay Now চাপুন এবং UPI payment সম্পূর্ণ করুন। তারপর আবার এই পেজে ফিরে এসে “Payment Completed & Activate” চাপুন। Expired membership হলে নতুন validity আগের validity শেষ হওয়ার পরের দিন থেকে শুরু হবে—payment করার দিন থেকে নয়।</div>
+  <div class="hint" style="margin-top:10px">প্রথমে Pay Now চাপুন এবং UPI payment সম্পূর্ণ করুন। তারপর Transaction ID / UTR দিয়ে “Submit for Verification” চাপুন। Payment যাচাই ও Accept করার পর শুধুমাত্র Admin নতুন validity নির্ধারণ করবেন।</div>
   <label style="display:block;margin-top:10px">Payment Transaction ID / UTR
     <input id="paymentTxn" class="input" placeholder="Payment করার পর UTR / Transaction ID দিন">
   </label>
   <div class="actions">
     <button id="closePayment" class="btn light">Cancel</button>
     <button id="payNow" class="btn green">💳 Pay Now</button>
-    <button id="confirmPayment" class="btn primary">✅ Payment Completed & Activate</button>
+    <button id="confirmPayment" class="btn primary">✅ Submit for Verification</button>
   </div>
 </div></div>
 <div id="renew" class="modal"><div class="box"><h2>🔄 Membership Renewal</h2><p id="renewText"></p><label>Membership Plan<select id="renewPlan" class="input"><option value="100">₹100 — 1 Month</option><option value="200">₹200 — 2 Months</option><option value="300">₹300 — 3 Months</option><option value="600">₹600 — 6 Months</option><option value="900">₹900 — 10 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option></select></label><label>Renewal Date<input id="renewDate" class="input" type="date"></label><div class="actions"><button id="closeRenew" class="btn light">Cancel</button><button id="doRenew" class="btn green">Renew</button></div></div></div>
@@ -257,10 +257,13 @@ function validityMonths(m){
   return Math.floor(fee/100);
 }
 function validityDate(m){
+  // Always prefer the saved validity_end. This prevents the Members list
+  // from falling back to an old paid/fee combination after Admin approval.
+  const saved=String(m&&m.validity_end||'').slice(0,10);
+  if(saved)return saved;
   const months=validityMonths(m);
   const paid=String(m.paid||'').slice(0,10);
   if(months<=0||!paid)return '';
-  // Payment Date is the start date. Fee determines the number of months.
   return addMonths(paid,months);
 }
 function fmt(d){return d?new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—'}
@@ -461,7 +464,7 @@ function rows(){
       '<td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td><td>'+fmt(m.paid)+'</td>'+
       '<td>'+ (validityDate(m)?fmt(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
       '<td>XXXX-XXXX-'+esc(String(m.aadhaar||'').slice(-4)||'—')+'</td><td><span class="badge '+s[0]+'">'+s[1]+'</span></td>'+
-      '<td>'+ (admin?'<button class="btn light" onclick="editM(\''+m.id+'\')">Edit</button> <button class="btn green" onclick="openR(\''+m.id+'\')">Renew</button> <button class="btn red" onclick="delM(\''+m.id+'\')">Delete</button>': (s[0]==='exp'?'<button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 Pay Membership</button>':(s[0]==='ok'?'<span class="badge ok">Active</span>':'—')))+'</td></tr>';
+      '<td>'+ (admin?'<button class="btn light" onclick="editM(\''+m.id+'\')">Edit</button> <button class="btn green" onclick="openR(\''+m.id+'\')">Renew</button> <button class="btn red" onclick="delM(\''+m.id+'\')">Delete</button>': ((s[0]==='due'||s[0]==='exp')?'<button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 '+(s[0]==='due'?'Renew Membership':'Pay Membership')+'</button>':(s[0]==='ok'?'<span class="badge ok">Active</span>':'—')))+'</td></tr>';
   }).join(''):'<tr><td colspan="13">No members found.</td></tr>';
   if(list.length) requestAnimationFrame(()=>loadMemberPhotosFast(list));
 }
@@ -551,7 +554,7 @@ async function loadData(){
   setLoading(!hadCache);
 
   // Refresh members and settings in parallel.
-  const membersPromise=rest('/members?select=id,member_id,name,phone,aadhaar,dob,blood,fee,paid,address&order=name.asc').then(async data=>{
+  const membersPromise=rest('/members?select=id,member_id,name,phone,aadhaar,dob,blood,fee,paid,validity_end,address&order=name.asc').then(async data=>{
     const serverRows=Array.isArray(data)?data:[];
     // Keep the known-good local list if the server temporarily returns an
     // empty result (for example during an RLS/network hiccup).
@@ -563,7 +566,7 @@ async function loadData(){
     members=serverRows.map(m=>{
       const x={...m,member_id:(m.member_id??''),member_type:savedMemberType(m.id),gender:(m.gender||'Male')};
       if(String(x.name||'').trim().toLowerCase()==='prasanta basu') x.member_id='NNSC0626001';
-      if(x.paid && Number(x.fee)>0) x.validity_end=validityDate(x);
+      if(!x.validity_end && x.paid && Number(x.fee)>0) x.validity_end=validityDate(x);
       return x;
     });
 
@@ -596,7 +599,7 @@ async function loadData(){
 
 async function loadApplications(){
   try{
-    const data=await rest('/membership_applications?select=id,name,phone,aadhaar,dob,blood,fee,paid,address,photo,status,member_id,created_at&order=created_at.desc');
+    const data=await rest('/membership_applications?select=id,name,phone,aadhaar,dob,blood,fee,paid,address,photo,status,member_id,transaction_id,created_at&order=created_at.desc');
     applications=Array.isArray(data)?data:[];
     renderApplications();
   }catch(e){
@@ -610,23 +613,74 @@ async function loadApplications(){
 function renderApplications(){
   const pending=applications.filter(a=>(a.status||'pending')==='pending');
   $('pendingCount').textContent=pending.length;
-  $('applicationRows').innerHTML=pending.length?pending.map(a=>'<tr><td><b>'+esc(a.name)+'</b></td><td>'+esc(a.phone||'—')+'</td><td>₹'+Number(a.fee||0)+' ('+validityMonths(a)+' মাস)</td><td>'+fmt(a.paid)+'</td><td>'+ (a.created_at?fmt(a.created_at.slice(0,10)):'—')+'</td><td><button class="btn green" onclick="approveApplication(\''+a.id+'\')">Approve & Create ID</button> <button class="btn red" onclick="rejectApplication(\''+a.id+'\')">Reject</button></td></tr>').join(''):'<tr><td colspan="6">No pending applications.</td></tr>';
+  $('applicationRows').innerHTML=pending.length?pending.map(a=>'<tr><td><b>'+esc(a.name)+'</b></td><td>'+esc(a.phone||'—')+'</td><td>₹'+Number(a.fee||0)+' ('+validityMonths(a)+' মাস)</td><td>'+esc(a.transaction_id||'—')+'</td><td>'+fmt(a.paid)+'</td><td>'+ (a.created_at?fmt(a.created_at.slice(0,10)):'—')+'</td><td><button class="btn green" onclick="approveApplication(\''+a.id+'\')">Verify & Approve</button> <button class="btn red" onclick="rejectApplication(\''+a.id+'\')">Reject</button></td></tr>').join(''):'<tr><td colspan="7">No pending applications.</td></tr>';
 }
 
 window.approveApplication=async id=>{
   if(!admin)return;
   const a=applications.find(x=>x.id===id);if(!a)return;
-  if(!confirm(a.name+'-এর Membership Application Approve করে Member ID তৈরি করবেন?'))return;
+  const fee=Number(a.fee||0);
+  const txn=String(a.transaction_id||'').trim();
+  if(fee<100)return alert('Payment amount invalid.');
+  if(!txn)return alert('এই payment-এর Transaction ID / UTR নেই। আগে UTR/Transaction ID দিতে হবে.');
+
+  // Existing-member renewal/payment: Admin verification is the ONLY place
+  // where validity is extended. The member never gets validity on submit.
+  if(a.member_id){
+    const m=members.find(x=>x.id===a.member_id);
+    if(!m)return alert('Member record not found for this payment.');
+    const currentEnd=validityDate(m);
+    const todayDate=todayISO();
+    const base=currentEnd ? addDays(currentEnd,1) : todayDate;
+    const months=validityMonths({fee});
+    const newEnd=addMonths(base,months);
+
+    if(!confirm(
+      'Payment Verify & Approve করবেন?\\n\\n'+
+      'Member: '+(a.name||m.name)+'\\n'+
+      'Amount: ₹'+fee+' = '+months+' মাস\\n'+
+      'UTR: '+txn+'\\n\\n'+
+      'New validity: '+fmt(base)+' to '+fmt(newEnd)
+    ))return;
+
+    try{
+      await rest('/members?id=eq.'+encodeURIComponent(a.member_id),{
+        method:'PATCH',
+        headers:{'Prefer':'return=minimal'},
+        body:JSON.stringify({paid:base,fee:fee,validity_end:newEnd})
+      });
+      await rest('/membership_applications?id=eq.'+encodeURIComponent(id),{
+        method:'PATCH',
+        headers:{'Prefer':'return=minimal'},
+        body:JSON.stringify({status:'approved',approved_at:new Date().toISOString()})
+      });
+      m.paid=base;m.fee=fee;m.validity_end=newEnd;
+      applications=applications.map(x=>x.id===id?{...x,status:'approved'}:x);
+      render();renderApplications();
+      alert('✅ Payment Verified & Renewal Approved.\nAmount: ₹'+fee+' = '+months+' মাস\nValidity: '+fmt(base)+' to '+fmt(newEnd)+'\nUTR: '+txn);
+    }catch(e){alert('Payment approval failed: '+e.message)}
+    return;
+  }
+
+  // New member application: Admin approval creates the member and assigns
+  // the initial validity. No validity is assigned before this approval.
+  if(!confirm(a.name+'-এর payment verify করে Member ID ও validity approve করবেন?'))return;
   const newId=nextMemberId('regular');
-  const member={id:crypto.randomUUID(),member_id:newId,name:a.name||'',phone:a.phone||'',aadhaar:a.aadhaar||'',dob:a.dob||'',blood:a.blood||'',fee:Number(a.fee||100),paid:a.paid||iso(today),address:a.address||'',photo:a.photo||''};
+  const memberFee=fee;
+  const memberPaid=a.paid||todayISO();
+  const memberValidity=memberFee>0?addMonths(memberPaid,validityMonths({fee:memberFee})):null;
+  const member={id:crypto.randomUUID(),member_id:newId,name:a.name||'',phone:a.phone||'',aadhaar:a.aadhaar||'',dob:a.dob||'',blood:a.blood||'',fee:memberFee,paid:memberPaid,validity_end:memberValidity,address:a.address||'',photo:a.photo||''};
   try{
     await rest('/members',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(member)});
-    await rest('/membership_applications?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({status:'approved',member_id:newId,approved_at:new Date().toISOString()})});
+    await rest('/membership_applications?id=eq.'+encodeURIComponent(id),{
+      method:'PATCH',headers:{'Prefer':'return=minimal'},
+      body:JSON.stringify({status:'approved',member_id:newId,approved_at:new Date().toISOString()})
+    });
     saveMemberType(member.id,'regular');members=[...members,member];applications=applications.map(x=>x.id===id?{...x,status:'approved',member_id:newId}:x);
-    render();renderApplications();alert('Approved! Member ID: '+newId);
+    render();renderApplications();
+    alert('✅ Payment Verified & Member Approved.\nMember ID: '+newId+'\nValidity: '+fmt(memberPaid)+' to '+fmt(memberValidity)+'\nUTR: '+txn);
   }catch(e){alert('Member creation failed: '+e.message)}
 };
-
 window.rejectApplication=async id=>{
   if(!admin)return;
   if(!confirm('এই application Reject করবেন?'))return;
@@ -668,7 +722,8 @@ $('applicationForm').onsubmit=async e=>{
   if(paymentAmount<100)return alert('Minimum membership payment ₹100 করতে হবে');
   if(!window.appPaymentStarted)return alert('প্রথমে Pay Now চাপুন এবং payment সম্পূর্ণ করুন');
   if(!txn)return alert('Payment Transaction ID / UTR অবশ্যই দিতে হবে');
-  const payload={name:$('appName').value.trim(),phone:$('appPhone').value.trim(),aadhaar:a,dob:$('appDob').value,blood:$('appBlood').value,fee:paymentAmount,paid:($('appPaid').value||todayISO()),address:$('appAddress').value.trim(),photo:appPhotoData,status:'pending'};
+  const existingMemberId=String(window.applicationMemberId||'').trim()||null;
+  const payload={name:$('appName').value.trim(),phone:$('appPhone').value.trim(),aadhaar:a,dob:$('appDob').value,blood:$('appBlood').value,fee:paymentAmount,paid:($('appPaid').value||todayISO()),address:$('appAddress').value.trim(),photo:appPhotoData,status:'pending',transaction_id:txn,member_id:existingMemberId};
   try{
     await rest('/membership_applications',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(payload)});
     $('applicationForm').reset();appPhotoData='';window.appPaymentStarted=false;$('appPaymentStatus').textContent='Payment না করা পর্যন্ত Submit করা যাবে না। Minimum payment ₹100.';$('appPaymentStatus').style.color='#a82f2f';$('appPhotoPreview').removeAttribute('src');
@@ -715,7 +770,10 @@ $('memberForm').onsubmit=async e=>{
   // Only the D code in Member ID changes.
   memberId=convertMemberIdType(memberId,memberType,$('eid').value);
   $('memberId').value=memberId;
-  const selectedFee=Number($('fee').value||0); const selectedPaid=selectedFee>0?$('paid').value:''; let m={id,member_id:memberId,name:$('name').value.trim(),phone:$('phone').value.trim(),aadhaar:a,dob:$('dob').value,blood:$('blood').value,fee:selectedFee,paid:selectedPaid,address:$('address').value.trim(),photo:memberPhoto};
+  const selectedFee=Number($('fee').value||0); const selectedPaid=selectedFee>0?$('paid').value:'';
+  const existing=members.find(x=>x.id===id);
+  const calculatedValidity=selectedFee>0&&selectedPaid?addMonths(selectedPaid,validityMonths({fee:selectedFee})):null;
+  let m={id,member_id:memberId,name:$('name').value.trim(),phone:$('phone').value.trim(),aadhaar:a,dob:$('dob').value,blood:$('blood').value,fee:selectedFee,paid:selectedPaid,validity_end:calculatedValidity||existing?.validity_end||null,address:$('address').value.trim(),photo:memberPhoto};
   try{
     const old=members.some(x=>x.id===id);
     await rest('/members?id=eq.'+encodeURIComponent(id),{method:old?'PATCH':'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(old?m:m)});
@@ -754,7 +812,7 @@ $('doRenew').onclick=async()=>{
     await rest('/members?id=eq.'+encodeURIComponent(renewId),{
       method:'PATCH',
       headers:{'Prefer':'return=minimal'},
-      body:JSON.stringify({paid,fee})
+      body:JSON.stringify({paid,fee,validity_end:newEnd})
     });
     m.paid=paid;m.fee=fee;m.validity_end=newEnd;
     render();$('renew').classList.remove('show');
@@ -788,21 +846,32 @@ $('confirmPayment').onclick=async()=>{
   const txn=$('paymentTxn').value.trim();
   if(fee<100)return alert('Minimum membership payment ₹100 করতে হবে');
   if(!txn)return alert('Payment Transaction ID / UTR দিন');
-  if(!confirm('Payment সম্পূর্ণ হয়েছে এবং UTR সঠিক—এটি Confirm করে Membership Activate করবেন?'))return;
-  const currentEnd=validityDate(m);
-  const base=(currentEnd && currentEnd < todayISO()) ? addDays(currentEnd,1) : todayISO();
-  const months=validityMonths({fee});
-  const newEnd=addMonths(base,months);
+  if(!confirm('Payment submit করে Admin verification-এর জন্য পাঠাবেন?\\n\\nValidity এখন পরিবর্তন হবে না। Admin payment verify & approve করার পরই validity বাড়বে.'))return;
+
   try{
-    await rest('/members?id=eq.'+encodeURIComponent(paymentId),{
-      method:'PATCH',headers:{'Prefer':'return=minimal'},
-      body:JSON.stringify({paid:base,fee})
+    const payload={
+      name:m.name||'',
+      phone:m.phone||'',
+      aadhaar:m.aadhaar||'',
+      dob:m.dob||'',
+      blood:m.blood||'',
+      fee:fee,
+      paid:todayISO(),
+      address:m.address||'',
+      photo:m.photo||'',
+      status:'pending',
+      member_id:m.id,
+      transaction_id:txn
+    };
+    await rest('/membership_applications',{
+      method:'POST',
+      headers:{'Prefer':'return=minimal'},
+      body:JSON.stringify(payload)
     });
-    m.paid=base;m.fee=fee;m.validity_end=newEnd;
-    render();
     $('payment').classList.remove('show');
-    alert('Membership activated successfully.\nValidity: '+fmt(base)+' to '+fmt(newEnd)+'\nUTR: '+txn);
-  }catch(e){alert('Membership activation failed: '+e.message)}
+    if(admin) await loadApplications();
+    alert('✅ Payment submitted for Admin verification.\\nAmount: ₹'+fee+'\\nUTR: '+txn+'\\n\\nAdmin payment verify & approve করার পরই validity update হবে.');
+  }catch(e){alert('Payment submission failed: '+e.message)}
 };
 
 $('search').oninput=rows;
