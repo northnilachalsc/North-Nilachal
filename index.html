@@ -29,9 +29,9 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 .notice-bar{height:44px;display:flex;align-items:center;background:#fff;border:2px solid #f4b400;border-radius:9px;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,.10)}
 .notice-label{height:100%;display:flex;align-items:center;background:#f4b400;color:#172033;font-weight:800;padding:0 13px;white-space:nowrap;position:relative;z-index:2}
 .notice-track{flex:1;height:100%;overflow:hidden;display:flex;align-items:center;white-space:nowrap}
-.notice-text{display:inline-block;white-space:nowrap;font-weight:700;color:#173b63;padding-left:100%;animation:noticeMove 90s linear infinite}
+.notice-text{display:inline-block;white-space:nowrap;font-weight:700;color:#173b63;padding-left:100%;animation:noticeMove 35s linear infinite}
 @keyframes noticeMove{from{transform:translateX(0)}to{transform:translateX(-100%)}}
-@media(max-width:760px){.notice-wrap{padding:0 10px;margin-bottom:10px}.notice-bar{height:40px}.notice-label{font-size:12px;padding:0 9px}.notice-text{font-size:12px;animation-duration:11s}}
+@media(max-width:760px){.notice-wrap{padding:0 10px;margin-bottom:10px}.notice-bar{height:40px}.notice-label{font-size:12px;padding:0 9px}.notice-text{font-size:12px;animation-duration:30s}}
 </style>
 </head><body>
 <header><div class="head"><img id="siteLogo" class="logo" alt="logo"><div class="brand"><h1 id="siteName">North Nilachal Sporting Center</h1><small id="regNo">Registration No.: S/1L/81249</small><small style="display:block;opacity:.8">Member Management System</small></div></div>
@@ -156,10 +156,15 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
       <option value="1000">₹1000 — 12 Months (1 Year)</option>
     </select>
   </label>
-  <div class="hint" style="margin-top:10px">₹100 = 1 month. ₹1000 = 1 year (12 months). Pay Now চাপলে আপনার UPI ID-তে payment করার জন্য UPI app খুলবে। Payment করার পর Admin verification করে membership active করতে হবে।</div>
+  <div id="paymentBackdateInfo" class="hint" style="margin-top:10px"></div>
+  <div class="hint" style="margin-top:10px">প্রথমে Pay Now চাপুন এবং UPI payment সম্পূর্ণ করুন। তারপর আবার এই পেজে ফিরে এসে “Payment Completed & Activate” চাপুন। Expired membership হলে নতুন validity আগের validity শেষ হওয়ার পরের দিন থেকে শুরু হবে—payment করার দিন থেকে নয়।</div>
+  <label style="display:block;margin-top:10px">Payment Transaction ID / UTR
+    <input id="paymentTxn" class="input" placeholder="Payment করার পর UTR / Transaction ID দিন">
+  </label>
   <div class="actions">
     <button id="closePayment" class="btn light">Cancel</button>
     <button id="payNow" class="btn green">💳 Pay Now</button>
+    <button id="confirmPayment" class="btn primary">✅ Payment Completed & Activate</button>
   </div>
 </div></div>
 <div id="renew" class="modal"><div class="box"><h2>🔄 Membership Renewal</h2><p id="renewText"></p><label>Membership Plan<select id="renewPlan" class="input"><option value="100">₹100 — 1 Month</option><option value="200">₹200 — 2 Months</option><option value="300">₹300 — 3 Months</option><option value="600">₹600 — 6 Months</option><option value="900">₹900 — 10 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option></select></label><label>Renewal Date<input id="renewDate" class="input" type="date"></label><div class="actions"><button id="closeRenew" class="btn light">Cancel</button><button id="doRenew" class="btn green">Renew</button></div></div></div>
@@ -759,8 +764,15 @@ $('doRenew').onclick=async()=>{
 const MEMBERSHIP_UPI_ID='rakeshsarmistha@ybl';
 window.openPayment=id=>{
   paymentId=id;let m=members.find(x=>x.id===id);if(!m)return;
+  const end=validityDate(m);
+  const expiredStart=end?addDays(end,1):iso(today);
   $('paymentText').innerHTML='<b>'+esc(m.name)+'</b><br>Current status: '+esc(st(m)[1])+'<br>Choose the amount you want to pay.';
-  $('paymentPlan').value='100';$('payment').classList.add('show');
+  $('paymentPlan').value='100';
+  $('paymentTxn').value='';
+  $('paymentBackdateInfo').innerHTML=end
+    ? '📅 এই membership-এর আগের validity শেষ হয়েছে <b>'+fmt(end)+'</b>। নতুন payment করলে নতুন validity শুরু হবে <b>'+fmt(expiredStart)+'</b> থেকে।'
+    : '📅 পুরনো validity পাওয়া না গেলে নতুন validity আজকের তারিখ থেকে শুরু হবে।';
+  $('payment').classList.add('show');
 };
 $('closePayment').onclick=()=>$('payment').classList.remove('show');
 $('payNow').onclick=()=>{
@@ -768,6 +780,29 @@ $('payNow').onclick=()=>{
   const note='North Nilachal Membership - '+m.name;
   const upi='upi://pay?pa='+encodeURIComponent(MEMBERSHIP_UPI_ID)+'&pn='+encodeURIComponent('North Nilachal Sporting Center')+'&am='+encodeURIComponent(amount.toFixed(2))+'&cu=INR&tn='+encodeURIComponent(note);
   window.location.href=upi;
+};
+$('confirmPayment').onclick=async()=>{
+  const m=members.find(x=>x.id===paymentId);
+  if(!m)return;
+  const fee=Number($('paymentPlan').value||100);
+  const txn=$('paymentTxn').value.trim();
+  if(fee<100)return alert('Minimum membership payment ₹100 করতে হবে');
+  if(!txn)return alert('Payment Transaction ID / UTR দিন');
+  if(!confirm('Payment সম্পূর্ণ হয়েছে এবং UTR সঠিক—এটি Confirm করে Membership Activate করবেন?'))return;
+  const currentEnd=validityDate(m);
+  const base=(currentEnd && currentEnd < todayISO()) ? addDays(currentEnd,1) : todayISO();
+  const months=validityMonths({fee});
+  const newEnd=addMonths(base,months);
+  try{
+    await rest('/members?id=eq.'+encodeURIComponent(paymentId),{
+      method:'PATCH',headers:{'Prefer':'return=minimal'},
+      body:JSON.stringify({paid:base,fee})
+    });
+    m.paid=base;m.fee=fee;m.validity_end=newEnd;
+    render();
+    $('payment').classList.remove('show');
+    alert('Membership activated successfully.\nValidity: '+fmt(base)+' to '+fmt(newEnd)+'\nUTR: '+txn);
+  }catch(e){alert('Membership activation failed: '+e.message)}
 };
 
 $('search').oninput=rows;
@@ -779,12 +814,21 @@ $('settings').onsubmit=async e=>{
   e.preventDefault();if(!admin)return;
   settings.name=$('clubName').value.trim()||settings.name;
   settings.reg=$('regNumber').value.trim()||'S/1L/81249';
+  settings.notice=$('scrollNotice').value.trim();
   if($('newPass').value)settings.pass=$('newPass').value;
   settings.logo=logoData||settings.logo;
   try{
     await rest('/settings?on_conflict=id',{method:'POST',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({...settings,id:1})});
+    saveFastCache();
     apply();alert('Settings saved');
-  }catch(e){alert('Settings save failed: '+e.message)}
+  }catch(e){
+    const msg=String(e.message||e);
+    if(/notice.*column|column.*notice|schema cache/i.test(msg)){
+      alert('Notice save হচ্ছে না। Supabase-এর settings table-এ notice নামে একটি TEXT column যোগ করতে হবে। তারপর আবার Save Settings চাপুন।');
+    }else{
+      alert('Settings save failed: '+msg);
+    }
+  }
 };
 
 
