@@ -60,14 +60,16 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
       <label>Date of Birth *<input id="appDob" class="input" type="date" required></label>
       <label>Gender *<select id="appGender" class="input" required><option value="Male" selected>Male</option><option value="Female">Female</option><option value="Other">Other</option></select></label><label>Blood Group<select id="appBlood" class="input"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></label>
       <label>Membership Plan *
-        <select id="appFee" class="input"><option value="100">₹100 — 1 Month</option><option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option></select>
+        <select id="appFee" class="input"><option value="100">₹100 — 1 Month</option><option value="200">₹200 — 2 Months</option><option value="300">₹300 — 3 Months</option><option value="400">₹400 — 4 Months</option><option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option></select>
       </label>
       <label>Payment Date *<input id="appPaid" class="input" type="date" required></label>
       <label>Membership Payment * 
         <select id="appPaymentPlan" class="input">
           <option value="100">₹100 — 1 Month</option>
-          <option value="500">₹500 — 5 Months</option>
-          <option value="1000">₹1000 — 12 Months (1 Year)</option>
+          <option value="200">₹200 — 2 Months</option>
+          <option value="300">₹300 — 3 Months</option>
+          <option value="400">₹400 — 4 Months</option>
+          <option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option>
         </select>
         <button type="button" id="appPayNow" class="btn green" style="margin-top:8px">💳 Pay Now</button>
         <small id="appPaymentStatus" style="display:block;margin-top:7px;color:#a82f2f">Payment না করা পর্যন্ত Submit করা যাবে না। Minimum payment ₹100.</small>
@@ -103,8 +105,10 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 <section id="add" class="section"><div class="card"><h2 id="formTitle">New Member</h2><form id="memberForm" class="form"><input type="hidden" id="eid"><label>Member ID *<input id="memberId" class="input" placeholder="NNSC0626001 / NNSCD0626001" required readonly></label><label><span>Member Type</span><select id="memberType" class="input"><option value="regular">Regular Member</option><option value="donor">Donor Member (D)</option></select><small style="display:block;color:#667;margin-top:5px">Donor/Regular পরিবর্তন করলে বিদ্যমান Member ID ও serial অপরিবর্তিত থাকবে; নির্বাচিত status এই browser-এ সংরক্ষিত থাকবে: NNSCD0626001, NNSCD0626002...</small></label><label>Name *<input id="name" class="input" required></label><label>Mobile<input id="phone" class="input"></label><label>Aadhaar Number<input id="aadhaar" class="input" maxlength="12" inputmode="numeric" placeholder="12 digits"></label><label>Date of Birth *<input id="dob" class="input" type="date" required></label><label>Gender *<select id="gender" class="input" required><option value="Male" selected>Male</option><option value="Female">Female</option><option value="Other">Other</option></select></label><label>Blood Group<select id="blood" class="input"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></label><label>Membership Plan (Admin can add without payment)
 <select id="fee" class="input">
           <option value="100">₹100 — 1 Month</option>
-          <option value="500">₹500 — 5 Months</option>
-          <option value="1000">₹1000 — 12 Months (1 Year)</option>
+          <option value="200">₹200 — 2 Months</option>
+          <option value="300">₹300 — 3 Months</option>
+          <option value="400">₹400 — 4 Months</option>
+          <option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option>
         </select>
 <small style="display:block;color:#667;margin-top:5px">₹100 = 1 month. বেশি টাকা দিলে সেই অনুযায়ী বেশি মাসের validity হবে।</small>
 </label><label>Payment Date *<input id="paid" class="input" type="date" required></label><label>Address<input id="address" class="input"></label><label>Photo<input id="photo" class="input" type="file" accept="image/*"><img id="memberPreview" class="photo" style="width:90px;height:90px;margin-top:6px"></label><div class="full actions"><button type="button" id="cancelAdd" class="btn light">Cancel</button><button class="btn primary">Save Member</button></div></form></div></section>
@@ -115,7 +119,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
   <h2>💳 Membership Payment</h2>
   <p id="paymentText"></p>
   <label>Choose Membership Plan
-    <select id="paymentPlan" class="input"><option value="100">₹100 — 1 Month</option><option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option></select>
+    <select id="paymentPlan" class="input"><option value="100">₹100 — 1 Month</option><option value="200">₹200 — 2 Months</option><option value="300">₹300 — 3 Months</option><option value="400">₹400 — 4 Months</option><option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option></select>
   </label>
   <div id="paymentBackdateInfo" class="hint" style="margin-top:10px"></div>
   <div class="hint" style="margin-top:10px">প্রথমে Pay Now চাপুন এবং UPI payment সম্পূর্ণ করুন। তারপর Transaction ID / UTR দিয়ে “Submit for Verification” চাপুন। Payment যাচাই ও Accept করার পর শুধুমাত্র Admin নতুন validity নির্ধারণ করবেন।</div>
@@ -128,7 +132,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
     <button id="confirmPayment" class="btn primary">✅ Submit for Verification</button>
   </div>
 </div></div>
-<div id="renew" class="modal"><div class="box"><h2>🔄 Membership Renewal</h2><p id="renewText"></p><label>Membership Plan<select id="renewPlan" class="input"><option value="100">₹100 — 1 Month</option><option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option></select></label><label>Renewal Date<input id="renewDate" class="input" type="date"></label><div class="actions"><button id="closeRenew" class="btn light">Cancel</button><button id="doRenew" class="btn green">Renew</button></div></div></div>
+<div id="renew" class="modal"><div class="box"><h2>🔄 Membership Renewal</h2><p id="renewText"></p><label>Membership Plan<select id="renewPlan" class="input"><option value="100">₹100 — 1 Month</option><option value="200">₹200 — 2 Months</option><option value="300">₹300 — 3 Months</option><option value="400">₹400 — 4 Months</option><option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option></select></label><label>Renewal Date<input id="renewDate" class="input" type="date"></label><div class="actions"><button id="closeRenew" class="btn light">Cancel</button><button id="doRenew" class="btn green">Renew</button></div></div></div>
 <script>
 /* North Nilachal Membership System
    Robust version: navigation/admin work even if the Supabase JS CDN is unavailable.
@@ -213,10 +217,10 @@ function addDays(d,days){
   return iso(x);
 }
 function validityMonths(m){
-  const fee=Number(m.fee||0);
-  // ₹1000 is the club's explicit 12-month (1 Year) plan.
+  const fee=Number(m&&m.fee||0);
+  // Club plans: ₹100=1 month, ₹200=2, ₹300=3, ₹400=4, ₹500=5, ₹1000=12 months.
   if(fee===1000)return 12;
-  return Math.floor(fee/100);
+  return fee>=100 ? Math.floor(fee/100) : 0;
 }
 function validityDate(m){
   // Always prefer the saved validity_end. This prevents the Members list
@@ -228,7 +232,7 @@ function validityDate(m){
   if(months<=0||!paid)return '';
   return addMonths(paid,months);
 }
-function fmt(d){return d?new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—'}
+function fmt(d){return d?new Date(d+'T00:00:00').toLocaleDateString('en-IN',{month:'long',year:'numeric'}):'—'}
 function fmtDateTime(d){return d?new Date(d).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}):'—'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function st(m){
@@ -511,6 +515,20 @@ function setLoading(show){
   if(x)x.style.display=show?'block':'none';
 }
 
+// Notice is kept locally because the current Supabase settings table does not
+// have a `notice` column. This prevents Save Settings from failing while
+// keeping the Admin notice working on this device/browser.
+const NOTICE_KEY='nnsc_notice';
+function loadLocalNotice(){
+  try{
+    const n=localStorage.getItem(NOTICE_KEY);
+    if(n!==null) settings.notice=n;
+  }catch(e){}
+}
+function saveLocalNotice(){
+  try{localStorage.setItem(NOTICE_KEY,settings.notice||'');}catch(e){}
+}
+
 async function loadData(){
   // Cache-first: show the last known member list immediately.
   const hadCache=loadFastCache();
@@ -551,8 +569,12 @@ async function loadData(){
 
   const settingsPromise=rest('/settings?id=eq.1&select=*&limit=1').then(s=>{
     if(Array.isArray(s)&&s[0])settings={...settings,...s[0]};
+    loadLocalNotice();
     apply(); saveFastCache();
-  }).catch(e=>console.warn('Settings load failed:',e.message));
+  }).catch(e=>{
+    loadLocalNotice();
+    console.warn('Settings load failed:',e.message);
+  });
 
   await membersPromise.catch(()=>{});
   apply(); render(); setLoading(false);
@@ -860,16 +882,17 @@ $('settings').onsubmit=async e=>{
   if($('newPass').value)settings.pass=$('newPass').value;
   settings.logo=logoData||settings.logo;
   try{
-    await rest('/settings?on_conflict=id',{method:'POST',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({...settings,id:1})});
+    // Save only columns that exist in the current settings table.
+    // Notice is saved separately in localStorage so this never fails because
+    // the database has no `notice` column.
+    const dbSettings={id:1,name:settings.name,reg:settings.reg,logo:settings.logo,pass:settings.pass};
+    await rest('/settings?on_conflict=id',{method:'POST',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(dbSettings)});
+    saveLocalNotice();
     saveFastCache();
     apply();alert('Settings saved');
   }catch(e){
     const msg=String(e.message||e);
-    if(/notice.*column|column.*notice|schema cache/i.test(msg)){
-      alert('Notice save হচ্ছে না। Supabase-এর settings table-এ notice নামে একটি TEXT column যোগ করতে হবে। তারপর আবার Save Settings চাপুন।');
-    }else{
-      alert('Settings save failed: '+msg);
-    }
+    alert('Settings save failed: '+msg);
   }
 };
 
