@@ -1083,9 +1083,12 @@ async function downloadAllMemberForms(){
   btn.textContent='⏳ Preparing forms...';
 
   try{
-    // Build the same forms used by the separate Print button.
+    // Refresh all member photo URLs before creating the downloadable file.
     // Download itself NEVER opens the printer.
+    // preparePrintForms() loads the latest photos from Supabase first.
+    const preparedRoot=await preparePrintForms();
     const html=buildAllMemberForms();
+    preparedRoot.remove();
 
     const fullHtml='<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>North Nilachal - All Member Forms</title></head><body>'+html+'</body></html>';
     const blob=new Blob([fullHtml],{type:'text/html;charset=utf-8'});
