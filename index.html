@@ -38,6 +38,17 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 @keyframes noticeMove{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 @media(max-width:760px){.notice-wrap{padding:0 10px;margin-bottom:10px}.notice-bar{height:40px}.notice-label{font-size:12px;padding:0 9px}.notice-text{font-size:12px;animation-duration:30s}}
 </style>
+<style id="all-member-print-css">
+@media print{
+  body>*:not(#all-member-print-root){display:none!important}
+  #all-member-print-root{display:block!important;background:#fff;color:#111}
+  #all-member-print-root .member-form-page{page-break-after:always;min-height:270mm}
+  #all-member-print-root .member-form-page:last-child{page-break-after:auto}
+}
+@media screen{
+  #all-member-print-root{display:none}
+}
+</style>
 </head><body>
 <header><div class="head"><img id="siteLogo" class="logo" alt="logo"><div class="brand"><h1 id="siteName">North Nilachal Sporting Center</h1><small id="regNo">Registration No.: S/1L/81249</small><small style="display:block;opacity:.8">Member Management System</small></div></div>
 <nav><button class="active" data-tab="home">🏠 Home</button><button data-tab="members">👥 Members</button><button data-tab="apply">📝 Membership Form</button><button id="adminBtn">🔒 Admin</button></nav></header>
@@ -102,7 +113,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
   <h2>🆔 Member IDs & Download Forms</h2>
   <p class="hint">এখান থেকে সকল Approved Members-এর Application Form একসঙ্গে Print / Save as PDF করা যাবে।</p>
   <div class="actions" style="justify-content:flex-start">
-    <button type="button" id="downloadAllForms" class="btn primary">⬇️ Download All Member Forms</button>
+    <button type="button" id="downloadAllForms" class="btn primary">⬇️ Download All Member Forms (PDF)</button>
     <button type="button" id="printAllForms" class="btn green">🖨️ Print All Forms</button>
   </div>
   <small style="display:block;margin-top:8px;color:#667">প্রতিটি সদস্যের জন্য আলাদা A4 Application Form তৈরি হবে। Donor Member হলে ফর্মে Donor Member (D) উল্লেখ থাকবে এবং Member ID-তে D code থাকবে।</small>
@@ -498,8 +509,10 @@ async function loadMemberPhotosFast(list){
       if(!Array.isArray(data)) continue;
       data.forEach(r=>{
         if(!r.photo)return;
+        const mem=members.find(x=>String(x.id)===String(r.id));
+        if(mem) mem.photo=r.photo;
         const el=document.querySelector('.member-photo[data-photo-id="'+String(r.id)+'"]');
-        if(el) el.innerHTML='<img src="'+r.photo+'" alt="Photo" loading="lazy">';
+        if(el) el.innerHTML='<img src="'+esc(r.photo)+'" alt="Photo">';
       });
     }catch(e){ console.warn('Member photo loading skipped:',e.message); break; }
   }
@@ -586,7 +599,7 @@ async function loadData(){
   setLoading(!hadCache);
 
   // Refresh members and settings in parallel.
-  const membersPromise=rest('/members?select=id,member_id,name,phone,aadhaar,dob,blood,fee,paid,validity_end,address&order=name.asc').then(async data=>{
+  const membersPromise=rest('/members?select=id,member_id,name,phone,aadhaar,dob,blood,fee,paid,validity_end,address,photo&order=name.asc').then(async data=>{
     const serverRows=Array.isArray(data)?data:[];
     // Keep the known-good local list if the server temporarily returns an
     // empty result (for example during an RLS/network hiccup).
@@ -965,6 +978,7 @@ $('settings').onsubmit=async e=>{
 
 
 function formValue(v){return esc(v==null||v===''?'—':v);}
+
 function buildAllMemberForms(){
   const list=sortedMembers(members);
   const pages=list.map((m,i)=>{
@@ -975,7 +989,14 @@ function buildAllMemberForms(){
     const paid=fmt(m.paid);
     const valid=fmt(validityDate(m));
     const status=st(m)[1];
-    const photo=m.photo?'<img src="'+esc(m.photo)+'" style="width:100px;height:100px;object-fit:cover;border:1px solid #999">':'<div style="width:100px;height:100px;border:1px solid #999;display:grid;place-items:center">Photo</div>';
+
+    // IMPORTANT: keep the original photo URL.
+    // <img> can load it in the browser even when fetch()/canvas is blocked by CORS.
+    const photo=m.photo
+      ? '<img src="'+esc(m.photo)+'" crossorigin="anonymous" style="width:100px;height:100px;object-fit:cover;border:1px solid #999" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\'">'
+        + '<div style="display:none;width:100px;height:100px;border:1px solid #999;place-items:center">Photo</div>'
+      : '<div style="width:100px;height:100px;border:1px solid #999;display:grid;place-items:center">Photo</div>';
+
     return `<div class="member-form-page">
       <div class="form-header">
         <div><h1>North Nilachal Sporting Center</h1><div>Registration No.: ${formValue(settings.reg||'S/1L/81249')}</div><div>Membership Application / Member Record</div></div>
@@ -983,7 +1004,8 @@ function buildAllMemberForms(){
       </div>
       <hr>
       <table class="print-table">
-        <tr><th>Member ID</th><td>${formValue(id)}</td><th>Member Type</th><td>${isDonor(m)?'Donor Member (D)':'Regular Member'}</td></tr><tr><th>Gender</th><td colspan="3">${formValue(gender)}</td></tr>
+        <tr><th>Member ID</th><td>${formValue(id)}</td><th>Member Type</th><td>${isDonor(m)?'Donor Member (D)':'Regular Member'}</td></tr>
+        <tr><th>Gender</th><td colspan="3">${formValue(gender)}</td></tr>
         <tr><th>Name</th><td colspan="3">${formValue(m.name)}</td></tr>
         <tr><th>Mobile</th><td>${formValue(m.phone)}</td><th>Blood Group</th><td>${formValue(m.blood)}</td></tr>
         <tr><th>Date of Birth</th><td>${dob}</td><th>Address</th><td>${formValue(m.address)}</td></tr>
@@ -995,28 +1017,118 @@ function buildAllMemberForms(){
       <div class="footer-note">North Nilachal Sporting Center • Official Member Record</div>
     </div>`;
   }).join('');
+
   return `<!doctype html><html><head><meta charset="utf-8"><title>North Nilachal - All Member Forms</title>
   <style>
   @page{size:A4;margin:12mm}body{font-family:Arial,sans-serif;color:#111}.member-form-page{page-break-after:always;min-height:270mm}.member-form-page:last-child{page-break-after:auto}
   .form-header{display:flex;justify-content:space-between;align-items:flex-start}.form-header h1{margin:0 0 6px;font-size:22px}.print-table{width:100%;border-collapse:collapse;margin-top:18px}.print-table th,.print-table td{border:1px solid #777;padding:9px;text-align:left;vertical-align:top}.print-table th{width:18%;background:#f1f1f1}.signature-row{display:flex;justify-content:space-between;margin-top:70px}.footer-note{margin-top:45px;text-align:center;font-size:12px;color:#666}
   </style></head><body>${pages}</body></html>`;
 }
-function downloadAllMemberForms(){
+
+function waitForImagesIn(root,timeout=15000){
+  const imgs=Array.from(root.querySelectorAll('img'));
+  if(!imgs.length)return Promise.resolve();
+  return new Promise(resolve=>{
+    let left=imgs.length, finished=false;
+    const finish=()=>{if(finished)return;finished=true;resolve();};
+    const one=()=>{left--;if(left<=0)finish();};
+    imgs.forEach(img=>{
+      if(img.complete && img.naturalWidth>0){one();return;}
+      img.addEventListener('load',one,{once:true});
+      img.addEventListener('error',one,{once:true});
+    });
+    setTimeout(finish,timeout);
+  });
+}
+
+async function preparePrintForms(){
+  // Refresh every member's photo URL before building the print area.
+  // The normal member list already proves these URLs can load in this page.
+  const ids=members.map(m=>m.id).filter(Boolean);
+  for(let i=0;i<ids.length;i+=15){
+    const batch=ids.slice(i,i+15);
+    try{
+      const data=await rest('/members?select=id,photo&id=in.('+batch.join(',')+')');
+      if(Array.isArray(data)){
+        data.forEach(r=>{
+          if(r.photo){
+            const mem=members.find(x=>String(x.id)===String(r.id));
+            if(mem)mem.photo=r.photo;
+          }
+        });
+      }
+    }catch(e){console.warn('Photo refresh failed:',e.message);}
+  }
+
+  const html=buildAllMemberForms();
+  let old=document.getElementById('all-member-print-root');
+  if(old)old.remove();
+
+  const root=document.createElement('div');
+  root.id='all-member-print-root';
+  root.innerHTML=html;
+  document.body.appendChild(root);
+
+  await waitForImagesIn(root,15000);
+  return root;
+}
+
+async function downloadAllMemberForms(){
   if(!admin)return;
   if(!members.length)return alert('কোনো Member নেই।');
-  const blob=new Blob([buildAllMemberForms()],{type:'text/html;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='North-Nilachal-All-Member-Application-Forms.html';
-  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+
+  const btn=$('downloadAllForms');
+  const old=btn.textContent;
+  btn.disabled=true;
+  btn.textContent='⏳ Preparing forms...';
+
+  try{
+    // Build the same forms used by the separate Print button.
+    // Download itself NEVER opens the printer.
+    const html=buildAllMemberForms();
+
+    const fullHtml='<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>North Nilachal - All Member Forms</title></head><body>'+html+'</body></html>';
+    const blob=new Blob([fullHtml],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='North-Nilachal-All-Member-Forms.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),3000);
+  }catch(e){
+    console.error(e);
+    alert('Forms download করা যায়নি: '+(e.message||e));
+  }finally{
+    btn.disabled=false;
+    btn.textContent=old;
+  }
 }
-function printAllMemberForms(){
+
+async function printAllMemberForms(){
   if(!admin)return;
   if(!members.length)return alert('কোনো Member নেই।');
-  const w=window.open('','_blank');
-  if(!w)return alert('Pop-up blocked. Browser থেকে pop-up allow করুন.');
-  w.document.open();w.document.write(buildAllMemberForms());w.document.close();
-  setTimeout(()=>w.print(),500);
+
+  const btn=$('printAllForms');
+  const old=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='⏳ Preparing photos...';}
+
+  try{
+    const root=await preparePrintForms();
+    window.scrollTo(0,0);
+    setTimeout(()=>{
+      window.print();
+      setTimeout(()=>root.remove(),1500);
+    },500);
+  }catch(e){
+    console.error(e);
+    alert('Print forms তৈরি করা যায়নি: '+(e.message||e));
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent=old;}
+  }
 }
+
 $('downloadAllForms').onclick=downloadAllMemberForms;
 $('printAllForms').onclick=printAllMemberForms;
 
