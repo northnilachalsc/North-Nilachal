@@ -63,7 +63,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 </div>
 <audio id="siteVoice" preload="auto"></audio>
 
-<section id="home" class="section active"><div id="loadingNotice" class="card hint" style="display:none;text-align:center;font-weight:700">⏳ Member details are loading…</div><div id="birthdayTop"></div><div class="grid"><div class="card stat">Total Members<b id="total">0</b></div><div class="card stat">Birthdays Today<b id="today">0</b></div><div class="card stat">Renewal Due<b id="due">0</b></div><div class="card stat">Expired<b id="expired">0</b></div></div><div class="card"><h2>🎂 Today’s Birthdays</h2><div id="birthList"></div></div></section>
+<section id="home" class="section active"><div id="loadingNotice" class="card hint" style="display:none;text-align:center;font-weight:700">⏳ Member details are loading…</div><div id="birthdayTop"></div><div class="grid"><div class="card stat" id="totalMembersCard" role="button" tabindex="0" title="View all members">Total Members<b id="total">0</b></div><div class="card stat">Birthdays Today<b id="today">0</b></div><div class="card stat" id="renewalDueCard" role="button" tabindex="0" title="View renewal due members">Renewal Due<b id="due">0</b></div><div class="card stat">Expired<b id="expired">0</b></div></div><div class="card"><h2>🎂 Today’s Birthdays</h2><div id="birthList"></div></div></section>
 <section id="members" class="section"><div class="toolbar"><input id="search" class="input" placeholder="Name/Mobile দিয়ে খুঁজুন"><button id="addBtn" class="btn primary" style="display:none">+ Add Member</button></div><div class="card tablewrap"><table><thead><tr><th>Photo</th><th>Member ID</th><th id="memberTypeHead" style="display:none">Member Type</th><th>Name</th><th>Gender</th><th>Blood Group</th><th id="dobHead">Date of Birth</th><th id="feeHead" style="display:none">Fee</th><th>Payment Date</th><th>Validity</th><th>Aadhaar (Last 4)</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div></section>
 
 <section id="apply" class="section">
@@ -129,7 +129,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
           <option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option>
         </select>
 <small style="display:block;color:#667;margin-top:5px">₹100 = 1 month. বেশি টাকা দিলে সেই অনুযায়ী বেশি মাসের validity হবে।</small>
-</label><label>Payment Date *<input id="paid" class="input" type="date" required></label><label>Address<input id="address" class="input"></label><label>Photo<input id="photo" class="input" type="file" accept="image/*" title="Maximum 100 KB"><div style="margin-top:7px;padding:9px 10px;border-radius:8px;background:#fff1f1;border:1px solid #e6a3a3;color:#b42318;font-weight:700;font-size:14px">⚠️ ছবির সর্বোচ্চ সাইজ: <b>100 KB</b><br>100 KB-এর বেশি ছবি আপলোড করা যাবে না।</div><img id="memberPreview" class="photo" style="width:90px;height:90px;margin-top:6px"></label><div class="full actions"><button type="button" id="cancelAdd" class="btn light">Cancel</button><button class="btn primary">Save Member</button></div></form></div></section>
+</label><label>Payment Date *<input id="paid" class="input" type="date" required></label><label>Address<input id="address" class="input"></label><label>Photo<input id="photo" class="input" type="file" accept="image/*" title="Maximum 100 KB"><div style="margin-top:7px;padding:9px 10px;border-radius:8px;background:#fff1f1;border:1px solid #e6a3a3;color:#b42318;font-weight:700;font-size:14px">⚠️ ছবির সর্বোচ্চ সাইজ: <b>100 KB</b><br>100 KB-এর বেশি ছবি আপলোড করা যাবে না।</div><img id="memberPreview" class="photo" style="width:90px;height:90px;margin-top:6px"><button type="button" id="deleteMemberPhotoBtn" class="btn red" style="margin-top:8px;display:none">🗑️ Delete Photo</button><small id="memberPhotoDeleteStatus" style="display:block;color:#a82f2f;margin-top:5px"></small></label><div class="full actions"><button type="button" id="cancelAdd" class="btn light">Cancel</button><button class="btn primary">Save Member</button></div></form></div></section>
 </main>
 <div id="login" class="modal"><div class="box"><h2>🔒 Admin Login</h2><p>For Admin only.</p><input id="loginPass" class="input" type="password" placeholder="Password"><p id="loginErr" style="color:#c33"></p><div class="actions"><button id="closeLogin" class="btn light">Cancel</button><button id="doLogin" class="btn primary">Login</button></div></div></div>
 
@@ -468,6 +468,48 @@ function apply(){
     if($('scrollNotice')) $('scrollNotice').value=settings.notice||'';
   }
 }
+
+function showRenewalDueFromHome(){
+  openTab('members');
+  const s=$('search');
+  if(s)s.value='';
+  const list=sortedMembers(members.filter(m=>st(m)[0]==='due'));
+  $('dobHead').style.display=admin?'table-cell':'none';
+  $('feeHead').style.display=admin?'table-cell':'none';
+  if($('memberTypeHead'))$('memberTypeHead').style.display=admin?'table-cell':'none';
+  $('rows').innerHTML=list.length?list.map(m=>{
+    let s=st(m),id=getMemberId(m)||'—';
+    return '<tr><td><div class="photo member-photo" data-photo-id="'+esc(String(m.id||''))+'">👤</div></td>'+
+      '<td><b>'+esc(id)+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+(isDonor(m)?'<span class="badge" style="background:#fff0c2;color:#8a5a00">⭐ Donor</span>':'<span class="badge" style="background:#eef2f7;color:#52606d">Member</span>')+'</td><td><b>'+esc(m.name)+'</b><small style="display:block;color:#778">'+esc(m.phone||'')+
+      (m.phone?'<a class="wa-btn" href="https://wa.me/'+String(m.phone).replace(/\D/g,'')+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')+
+      '</small></td><td><b>'+esc(m.gender||'Male')+'</b></td><td><b>'+esc(m.blood||'—')+'</b></td>'+
+      '<td style="display:'+(admin?'table-cell':'none')+'">'+fmt(m.dob)+'</td><td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td>'+
+      '<td>'+fmt(m.paid)+'</td><td>'+ (validityDate(m)?fmt(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
+      '<td>XXXX-XXXX-'+esc(String(m.aadhaar||'').slice(-4)||'—')+'</td><td><span class="badge '+s[0]+'">'+s[1]+'</span></td>'+
+      '<td>'+ (admin?'<button class="btn light" onclick="editM(\''+m.id+'\')">Edit</button> <button class="btn green" onclick="openR(\''+m.id+'\')">Renew</button> <button class="btn red" onclick="delM(\''+m.id+'\')">Delete</button>':'<button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 Renew Membership</button>')+'</td></tr>';
+  }).join(''):'<tr><td colspan="13">No renewal due members.</td></tr>';
+  if(list.length) requestAnimationFrame(()=>loadMemberPhotosFast(list));
+  window.scrollTo(0,0);
+}
+$('renewalDueCard').onclick=showRenewalDueFromHome;
+$('renewalDueCard').onkeydown=e=>{
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();showRenewalDueFromHome();}
+};
+
+function showAllMembersFromHome(){
+  openTab('members');
+  const s=$('search');
+  if(s)s.value='';
+  rows();
+  window.scrollTo(0,0);
+}
+$('totalMembersCard').onclick=showAllMembersFromHome;
+$('totalMembersCard').onkeydown=e=>{
+  if(e.key==='Enter'||e.key===' '){
+    e.preventDefault();
+    showAllMembersFromHome();
+  }
+};
 
 function render(){
   const __renderStart=performance.now();
@@ -858,18 +900,56 @@ $('memberForm').onsubmit=async e=>{
     saveMemberType(id,memberType);
     m.member_type=memberType;
     members=old?members.map(x=>x.id===id?m:x):[...members,m];
+    saveFastCache();
     render();openTab('members');
   }catch(e){alert('Member save failed: '+e.message)}
 };
 
 window.editM=async id=>{
   if(!admin)return;let m=members.find(x=>x.id===id);if(!m)return;
-  openTab('add');$('formTitle').textContent='Edit Member';$('eid').value=m.id;$('memberType').value=isDonor(m)?'donor':'regular';$('memberId').value=getMemberId(m)||nextMemberId($('memberType').value);$('name').value=m.name||'';$('phone').value=m.phone||'';$('aadhaar').value=m.aadhaar||'';$('dob').value=m.dob||'';$('gender').value=m.gender||'Male';$('blood').value=m.blood||'';$('fee').value=m.fee||100;$('paid').value=m.paid||'';$('address').value=m.address||'';memberPhoto='';$('memberPreview').src='';
-  try{const d=await rest('/members?id=eq.'+encodeURIComponent(id)+'&select=photo&limit=1');memberPhoto=(Array.isArray(d)&&d[0]&&d[0].photo)||'';$('memberPreview').src=memberPhoto||'';}catch(e){console.warn('Photo load skipped:',e.message);}
+  openTab('add');$('formTitle').textContent='Edit Member';$('eid').value=m.id;$('memberType').value=isDonor(m)?'donor':'regular';$('memberId').value=getMemberId(m)||nextMemberId($('memberType').value);$('name').value=m.name||'';$('phone').value=m.phone||'';$('aadhaar').value=m.aadhaar||'';$('dob').value=m.dob||'';$('gender').value=m.gender||'Male';$('blood').value=m.blood||'';$('fee').value=m.fee||100;$('paid').value=m.paid||'';$('address').value=m.address||'';memberPhoto='';$('memberPreview').removeAttribute('src');$('deleteMemberPhotoBtn').style.display='none';$('memberPhotoDeleteStatus').textContent='';
+  try{
+    const d=await rest('/members?id=eq.'+encodeURIComponent(id)+'&select=photo&limit=1');
+    memberPhoto=(Array.isArray(d)&&d[0]&&d[0].photo)||'';
+    if(memberPhoto){
+      $('memberPreview').src=memberPhoto;
+      $('deleteMemberPhotoBtn').style.display='inline-block';
+    }
+  }catch(e){console.warn('Photo load skipped:',e.message);}
 };
 window.delM=async id=>{
   if(!admin||!confirm('Delete this member?'))return;
   try{await rest('/members?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:{'Prefer':'return=minimal'}});members=members.filter(x=>x.id!==id);render()}catch(e){alert('Delete failed: '+e.message)}
+};
+
+$('deleteMemberPhotoBtn').onclick=async()=>{
+  if(!admin)return;
+  const id=$('eid').value;
+  if(!id)return;
+  if(!memberPhoto)return;
+  if(!confirm('এই সদস্যের Photo স্থায়ীভাবে database থেকে মুছে ফেলবেন?'))return;
+
+  const btn=$('deleteMemberPhotoBtn');
+  btn.disabled=true;btn.textContent='⏳ Deleting...';
+  try{
+    await rest('/members?id=eq.'+encodeURIComponent(id),{
+      method:'PATCH',
+      headers:{'Prefer':'return=minimal'},
+      body:JSON.stringify({photo:''})
+    });
+    memberPhoto='';
+    $('photo').value='';
+    $('memberPreview').removeAttribute('src');
+    btn.style.display='none';
+    $('memberPhotoDeleteStatus').textContent='✅ Photo permanently deleted from the database.';
+    const mem=members.find(x=>String(x.id)===String(id));
+    if(mem)mem.photo='';
+    saveFastCache();
+    render();
+  }catch(e){
+    btn.disabled=false;btn.textContent='🗑️ Delete Photo';
+    $('memberPhotoDeleteStatus').textContent='❌ Photo delete failed: '+String(e.message||e);
+  }
 };
 
 window.openR=id=>{
@@ -977,7 +1057,7 @@ $('voiceFile').onchange=e=>{
   r.readAsDataURL(f);
 };
 
-$('deleteVoiceBtn').onclick=()=>{
+$('deleteVoiceBtn').onclick=async()=>{
   if(!admin)return;
   if(!settings.voice){
     $('voiceDeleteStatus').textContent='বর্তমানে কোনো Audio নেই।';
@@ -985,7 +1065,10 @@ $('deleteVoiceBtn').onclick=()=>{
   }
   if(!confirm('বর্তমান Voice-over / Audio স্থায়ীভাবে মুছে ফেলবেন?'))return;
 
-  // Clear the in-memory audio and the preview.
+  const btn=$('deleteVoiceBtn');
+  if(btn){btn.disabled=true;btn.textContent='⏳ Deleting...';}
+
+  // Clear locally first.
   settings.voice='';
   $('voiceFile').value='';
   const preview=$('voiceAdminPreview');
@@ -1001,8 +1084,22 @@ $('deleteVoiceBtn').onclick=()=>{
     siteVoice.load();
   }
 
-  $('deleteVoiceBtn').style.display='none';
-  $('voiceDeleteStatus').textContent='Audio মুছে ফেলা হয়েছে। এখন Save Settings চাপুন।';
+  try{
+    // Persist the deletion immediately. It no longer depends on pressing Save Settings.
+    const dbSettings={id:1,name:settings.name||'North Nilachal Sporting Center',reg:settings.reg||'S/1L/81249',logo:packMediaSettings(),pass:settings.pass||'1234'};
+    await rest('/settings?on_conflict=id',{
+      method:'POST',
+      headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},
+      body:JSON.stringify(dbSettings)
+    });
+    saveFastCache();
+    if(btn)btn.style.display='none';
+    $('voiceDeleteStatus').textContent='✅ Audio permanently deleted from the database.';
+  }catch(e){
+    // Keep the UI honest if the database update failed.
+    $('voiceDeleteStatus').textContent='❌ Audio delete failed: '+String(e.message||e);
+    if(btn){btn.disabled=false;btn.textContent='🗑️ Delete Audio';btn.style.display='inline-block';}
+  }
 };
 
 $('settings').onsubmit=async e=>{
