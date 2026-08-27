@@ -140,17 +140,20 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
     <select id="paymentPlan" class="input"><option value="100">₹100 — 1 Month</option><option value="200">₹200 — 2 Months</option><option value="300">₹300 — 3 Months</option><option value="400">₹400 — 4 Months</option><option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option></select>
   </label>
   <div id="paymentBackdateInfo" class="hint" style="margin-top:10px"></div>
-  <div class="hint" style="margin-top:10px">প্রথমে Pay Now চাপুন এবং UPI payment সম্পূর্ণ করুন। তারপর Transaction ID / UTR দিয়ে “Submit for Verification” চাপুন। Payment যাচাই ও Accept করার পর শুধুমাত্র Admin নতুন validity নির্ধারণ করবেন।</div>
-  <label style="display:block;margin-top:10px">Payment Transaction ID / UTR
-    <input id="paymentTxn" class="input" placeholder="Payment করার পর UTR / Transaction ID দিন">
-  </label>
+  <div class="hint" style="margin-top:10px">💳 Pay Now চাপুন এবং UPI payment সম্পূর্ণ করুন। Payment সফল হলে Existing Member-এর Membership Renewal <b>অটোমেটিক</b> হবে। Renewal-এর জন্য UTR / Transaction ID বা Admin Verification লাগবে না।</div>
+  <div id="paymentTxnWrap" style="display:none">
+    <label style="display:block;margin-top:10px">Payment Transaction ID / UTR
+      <input id="paymentTxn" class="input" placeholder="Payment করার পর UTR / Transaction ID দিন">
+    </label>
+  </div>
   <div class="actions">
     <button id="closePayment" class="btn light">Cancel</button>
     <button id="payNow" class="btn green">💳 Pay Now</button>
-    <button id="confirmPayment" class="btn primary">✅ Submit for Verification</button>
+    <button id="confirmPayment" class="btn primary" style="display:none">✅ Submit for Verification</button>
   </div>
 </div></div>
 <div id="renew" class="modal"><div class="box"><h2>🔄 Membership Renewal</h2><p id="renewText"></p><label>Membership Plan<select id="renewPlan" class="input"><option value="100">₹100 — 1 Month</option><option value="200">₹200 — 2 Months</option><option value="300">₹300 — 3 Months</option><option value="400">₹400 — 4 Months</option><option value="500">₹500 — 5 Months</option><option value="1000">₹1000 — 12 Months (1 Year)</option></select></label><label>Renewal Date<input id="renewDate" class="input" type="date"></label><div class="actions"><button id="closeRenew" class="btn light">Cancel</button><button id="doRenew" class="btn green">Renew</button></div></div></div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 /* North Nilachal Membership System
    Robust version: navigation/admin work even if the Supabase JS CDN is unavailable.
@@ -159,6 +162,8 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 const SUPABASE_URL='https://obgmjnvcotvcnabgqogb.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_mWkruUdb0_z-Fdsw1nz1_w_VbPOAuHm';
 const REST_BASE=SUPABASE_URL+'/rest/v1';
+const RAZORPAY_KEY_ID='rzp_live_TThYy8IKcDfuWw';
+const RAZORPAY_FUNCTION='Create-payment';
 
 let members=[];
 let applications=[];
@@ -227,18 +232,31 @@ function setDefaultPaymentDates(){
   // Admin's New Member form also starts with today's date.
   if($('paid') && !$('eid').value) $('paid').value=d;
 }
-function addMonths(d,months){
-  // Calculate validity from the Payment Date using calendar months.
-  // The payment date is the first day of the paid period:
-  // 01-Jun-2026 + 1 month  -> 30-Jun-2026
-  // 01-Jun-2026 + 2 months -> 31-Jul-2026
-  // 01-Jun-2026 + 12 months -> 31-May-2027
-  const x=new Date(d+'T00:00:00');
-  const n=Number(months)||0;
-  if(!n)return iso(x);
-  return iso(new Date(x.getFullYear(),x.getMonth()+n,x.getDate()-1));
+const MEMBERSHIP_START_YEAR=2026;
+const MEMBERSHIP_START_MONTH=5; // June = 0-based month 5
+function membershipMonthIndex(d){
+  const x=new Date(String(d).slice(0,10)+'T00:00:00');
+  return (x.getFullYear()-MEMBERSHIP_START_YEAR)*12 + (x.getMonth()-MEMBERSHIP_START_MONTH) + 1;
 }
-function feeMonths(fee){const n=Number(fee||100);return n===500?5:n===1000?12:1}
+function monthIndexToDate(index){
+  const i=Math.max(1,Number(index)||1)-1;
+  const y=MEMBERSHIP_START_YEAR+Math.floor(i/12);
+  const m=MEMBERSHIP_START_MONTH+(i%12);
+  return new Date(y,m,1);
+}
+function addMonths(d,months){
+  // Membership is counted by calendar months from June 2026, not by payment dates.
+  const startIndex=Math.max(1,membershipMonthIndex(d));
+  const endIndex=startIndex+(Number(months)||0)-1;
+  const end=monthIndexToDate(endIndex);
+  end.setMonth(end.getMonth()+1);
+  end.setDate(end.getDate()-1);
+  return iso(end);
+}
+function feeMonths(fee){
+  const n=Number(fee||100);
+  return n>=100 ? Math.floor(n/100) : 0;
+}
 function addDays(d,days){
   let x=new Date(d+'T00:00:00');
   x.setDate(x.getDate()+Number(days));
@@ -264,13 +282,18 @@ function fmt(d){return d?new Date(d+'T00:00:00').toLocaleDateString('en-IN',{mon
 function fmtDateTime(d){return d?new Date(d).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}):'—'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function st(m){
-  let e=validityDate(m),t=iso(today);
+  let e=validityDate(m);
   if(Number(m.fee||0)<=0)return ['due','Payment Pending'];
   if(!e)return ['exp','Validity নেই'];
-  let days=Math.ceil((new Date(e+'T00:00:00')-new Date(t+'T00:00:00'))/86400000);
-  if(t>=e)return ['exp','Expired'];
-  if(days<=30)return ['due','Renewal Due'];
-  return ['ok','সক্রিয়'];
+
+  // Calendar-month status: active month -> one full renewal-due month -> expired.
+  const todayMonth=(today.getFullYear()*12)+today.getMonth();
+  const endDate=new Date(e+'T00:00:00');
+  const endMonth=(endDate.getFullYear()*12)+endDate.getMonth();
+
+  if(todayMonth<=endMonth)return ['ok','সক্রিয়'];
+  if(todayMonth===endMonth+1)return ['due','Renewal Due'];
+  return ['exp','Expired'];
 }
 function bd(m){if(!m.dob)return false;let d=new Date(m.dob+'T00:00:00');return d.getMonth()===today.getMonth()&&d.getDate()===today.getDate()}
 
@@ -723,9 +746,9 @@ window.approveApplication=async id=>{
     const m=members.find(x=>x.id===a.member_id);
     if(!m)return alert('Member record not found for this payment.');
     const currentEnd=validityDate(m);
-    const todayDate=todayISO();
-    const base=currentEnd ? addDays(currentEnd,1) : todayDate;
     const months=validityMonths({fee});
+    const currentMonth=currentEnd ? membershipMonthIndex(currentEnd) : membershipMonthIndex('2026-06-01');
+    const base=iso(monthIndexToDate(currentMonth+1));
     const newEnd=addMonths(base,months);
 
     if(!confirm(
@@ -812,19 +835,57 @@ $('appPaymentPlan').onchange=()=>{
   if($('appFee')) $('appFee').value=$('appPaymentPlan').value;
 };
 
-$('appPayNow').onclick=()=>{
-  // Payment Date always defaults to the actual day the payment is started.
+$('appPayNow').onclick=async()=>{
   if($('appPaid')) $('appPaid').value=todayISO();
   if($('appPaid')) $('appPaid').disabled=true;
   const amount=Number($('appPaymentPlan').value||0);
   if(amount<100)return alert('Minimum membership payment ₹100 করতে হবে');
-  const upi='upi://pay?pa='+encodeURIComponent(MEMBERSHIP_UPI_ID)+'&pn='+encodeURIComponent('North Nilachal Sporting Center')+'&am='+encodeURIComponent(amount.toFixed(2))+'&cu=INR&tn='+encodeURIComponent('North Nilachal Membership Application');
-  window.appPaymentStarted=true;
-  window.appPaymentTime=new Date().toISOString();
-  sessionStorage.setItem('nnsc_app_payment_time',window.appPaymentTime);
-  $('appPaymentStatus').textContent='Payment app খুলছে। Payment সম্পূর্ণ করার পরে Transaction ID / UTR দিন।';
-  $('appPaymentStatus').style.color='#137a43';
-  window.location.href=upi;
+  try{
+    if(!window.Razorpay)throw new Error('Razorpay Checkout লোড হয়নি।');
+    const name=$('appName').value.trim(),phone=$('appPhone').value.trim();
+    if(!name||!phone)return alert('আগে নাম ও মোবাইল নম্বর দিন');
+    const email=$('appEmail')?.value?.trim()||'';
+    const memberKey=phone.replace(/\D/g,'')||email;
+    const deviceId=localStorage.getItem('nnscDeviceId')||('nnsc_'+(crypto.randomUUID?crypto.randomUUID():Date.now()));
+    localStorage.setItem('nnscDeviceId',deviceId);
+    $('appPaymentStatus').textContent='⏳ Secure payment order তৈরি হচ্ছে...';
+    $('appPaymentStatus').style.color='#137a43';
+    const r=await fetch(SUPABASE_URL+'/functions/v1/'+RAZORPAY_FUNCTION,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},
+      body:JSON.stringify({action:'create',name,phone,email,memberKey,device_id:deviceId,amount})
+    });
+    const order=await r.json();
+    if(!r.ok)throw new Error(order.error||'Payment order তৈরি হয়নি');
+    if(!order.key_id)throw new Error('Razorpay Key ID পাওয়া যায়নি।');
+    if(!order.order_id||!order.amount)throw new Error('Razorpay Order তথ্য অসম্পূর্ণ এসেছে।');
+    window.appPaymentStarted=true;
+    window.appPaymentTime=new Date().toISOString();
+    sessionStorage.setItem('nnsc_app_payment_time',window.appPaymentTime);
+    const rz=new Razorpay({
+      key:order.key_id||RAZORPAY_KEY_ID,amount:order.amount,currency:order.currency||'INR',
+      name:'North Nilachal Sporting Center',description:'Membership Application',order_id:order.order_id,
+      prefill:{name,email,contact:phone},notes:{memberKey},theme:{color:'#137a43'},
+      handler:async function(resp){
+        try{
+          $('appPaymentStatus').textContent='⏳ Payment যাচাই হচ্ছে...';
+          const vr=await fetch(SUPABASE_URL+'/functions/v1/'+RAZORPAY_FUNCTION,{
+            method:'POST',
+            headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},
+            body:JSON.stringify({action:'verify',name,phone,email,memberKey,device_id:deviceId,amount,
+              razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature})
+          });
+          const out=await vr.json();
+          if(!vr.ok||!out.success)throw new Error(out.error||'Payment verification failed');
+          $('appTxn').value=resp.razorpay_payment_id;
+          $('appPaymentStatus').textContent='✅ Payment verified। এখন Submit করুন।';
+          $('appPaymentStatus').style.color='#137a43';
+        }catch(e){$('appPaymentStatus').textContent='❌ Payment হয়েছে, কিন্তু verification সম্পূর্ণ হয়নি।';$('appPaymentStatus').style.color='#b42318';}
+      }
+    });
+    rz.on('payment.failed',()=>{$('appPaymentStatus').textContent='❌ Payment ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';$('appPaymentStatus').style.color='#b42318';});
+    rz.open();
+  }catch(e){$('appPaymentStatus').textContent='❌ '+e.message;$('appPaymentStatus').style.color='#b42318';}
 };
 
 $('applicationForm').onsubmit=async e=>{
@@ -985,6 +1046,8 @@ window.openPayment=id=>{
   $('paymentText').innerHTML='<b>'+esc(m.name)+'</b><br>Current status: '+esc(st(m)[1])+'<br>Choose the amount you want to pay.';
   $('paymentPlan').value='100';
   $('paymentTxn').value='';
+  if($('paymentTxnWrap'))$('paymentTxnWrap').style.display='none';
+  if($('confirmPayment'))$('confirmPayment').style.display='none';
   window.paymentTime='';
   $('paymentBackdateInfo').innerHTML=end
     ? '📅 এই membership-এর আগের validity শেষ হয়েছে <b>'+fmt(end)+'</b>। নতুন payment করলে নতুন validity শুরু হবে <b>'+fmt(expiredStart)+'</b> থেকে।'
@@ -992,13 +1055,66 @@ window.openPayment=id=>{
   $('payment').classList.add('show');
 };
 $('closePayment').onclick=()=>$('payment').classList.remove('show');
-$('payNow').onclick=()=>{
+$('payNow').onclick=async()=>{
   const amount=Number($('paymentPlan').value||100),m=members.find(x=>x.id===paymentId);if(!m)return;
-  const note='North Nilachal Membership - '+m.name;
-  const upi='upi://pay?pa='+encodeURIComponent(MEMBERSHIP_UPI_ID)+'&pn='+encodeURIComponent('North Nilachal Sporting Center')+'&am='+encodeURIComponent(amount.toFixed(2))+'&cu=INR&tn='+encodeURIComponent(note);
-  window.paymentTime=new Date().toISOString();
-  sessionStorage.setItem('nnsc_payment_time',window.paymentTime);
-  window.location.href=upi;
+  if(amount<100)return alert('Minimum membership payment ₹100 করতে হবে');
+  try{
+    if(!window.Razorpay)throw new Error('Razorpay Checkout লোড হয়নি।');
+    const memberKey=String(m.phone||m.id||'').replace(/\D/g,'')||String(m.id||'');
+    const r=await fetch(SUPABASE_URL+'/functions/v1/'+RAZORPAY_FUNCTION,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},
+      body:JSON.stringify({action:'create',name:m.name||'',phone:m.phone||'',email:m.email||'',memberKey,device_id:localStorage.getItem('nnscDeviceId')||'' ,amount})
+    });
+    const order=await r.json();
+    if(!r.ok)throw new Error(order.error||'Payment order তৈরি হয়নি');
+    if(!order.key_id)throw new Error('Razorpay Key ID পাওয়া যায়নি।');
+    if(!order.order_id||!order.amount)throw new Error('Razorpay Order তথ্য অসম্পূর্ণ এসেছে।');
+    window.paymentTime=new Date().toISOString();
+    sessionStorage.setItem('nnsc_payment_time',window.paymentTime);
+    const rz=new Razorpay({
+      key:order.key_id||RAZORPAY_KEY_ID, amount:order.amount, currency:order.currency||'INR',
+      name:'North Nilachal Sporting Center',
+      description:'Membership Renewal',
+      order_id:order.order_id,
+      prefill:{name:m.name||'',contact:m.phone||'',email:m.email||''},
+      notes:{memberKey},
+      theme:{color:'#137a43'},
+      handler:async function(resp){
+        try{
+          const vr=await fetch(SUPABASE_URL+'/functions/v1/'+RAZORPAY_FUNCTION,{
+            method:'POST',
+            headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},
+            body:JSON.stringify({action:'verify',name:m.name||'',phone:m.phone||'',email:m.email||'',memberKey,device_id:localStorage.getItem('nnscDeviceId')||'',amount,
+              razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature})
+          });
+          const out=await vr.json();
+          if(!vr.ok||!out.success)throw new Error(out.error||'Payment verification failed');
+
+          // Existing member renewal: successful Razorpay payment immediately
+          // extends membership. No UTR submission or Admin verification is needed.
+          const currentEnd=validityDate(m);
+          const months=validityMonths({fee:amount});
+          const currentMonth=currentEnd ? membershipMonthIndex(currentEnd) : membershipMonthIndex('2026-06-01');
+          const base=iso(monthIndexToDate(currentMonth+1));
+          const newEnd=addMonths(base,months);
+          await rest('/members?id=eq.'+encodeURIComponent(m.id),{
+            method:'PATCH',
+            headers:{'Prefer':'return=minimal'},
+            body:JSON.stringify({paid:base,fee:amount,validity_end:newEnd})
+          });
+          m.paid=base;m.fee=amount;m.validity_end=newEnd;
+          $('payment').classList.remove('show');
+          window.paymentTime='';sessionStorage.removeItem('nnsc_payment_time');
+          render();
+          alert('✅ Payment সফল হয়েছে এবং Membership অটোমেটিক Renew হয়েছে।\nAmount: ₹'+amount+' = '+months+' মাস\nValidity: '+fmt(base)+' থেকে '+fmt(newEnd)+'\nPayment ID: '+resp.razorpay_payment_id);
+          if(admin)await loadApplications();
+        }catch(e){alert('❌ Payment হয়েছে, কিন্তু verification সম্পূর্ণ হয়নি। Admin-এর সঙ্গে যোগাযোগ করুন।');}
+      }
+    });
+    rz.on('payment.failed',()=>alert('❌ Payment ব্যর্থ হয়েছে। আবার চেষ্টা করুন।'));
+    rz.open();
+  }catch(e){alert('❌ '+e.message)}
 };
 $('confirmPayment').onclick=async()=>{
   const m=members.find(x=>x.id===paymentId);
