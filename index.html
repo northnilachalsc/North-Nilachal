@@ -509,7 +509,7 @@ function showRenewalDueFromHome(){
       '<td style="display:'+(admin?'table-cell':'none')+'">'+fmt(m.dob)+'</td><td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td>'+
       '<td>'+fmt(m.paid)+'</td><td>'+ (validityDate(m)?fmt(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
       '<td>XXXX-XXXX-'+esc(String(m.aadhaar||'').slice(-4)||'—')+'</td><td><span class="badge '+s[0]+'">'+s[1]+'</span></td>'+
-      '<td>'+ (admin?'<button class="btn light" onclick="editM(\''+m.id+'\')">Edit</button> <button class="btn green" onclick="openR(\''+m.id+'\')">Renew</button> <button class="btn red" onclick="delM(\''+m.id+'\')">Delete</button>':'<button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 Renew Membership</button>')+'</td></tr>';
+      '<td>'+ (admin?'<button class="btn light" onclick="editM(\''+m.id+'\')">Edit</button> <button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 Renew</button> <button class="btn red" onclick="delM(\''+m.id+'\')">Delete</button>':'<button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 Renew Membership</button>')+'</td></tr>';
   }).join(''):'<tr><td colspan="13">No renewal due members.</td></tr>';
   if(list.length) requestAnimationFrame(()=>loadMemberPhotosFast(list));
   window.scrollTo(0,0);
@@ -1018,24 +1018,9 @@ window.openR=id=>{
   $('renewText').innerHTML='<b>'+esc(m.name)+'</b>-’s membership renewal.';$('renewPlan').value='100';$('renewDate').value=iso(today);$('renew').classList.add('show');
 };
 $('closeRenew').onclick=()=>$('renew').classList.remove('show');
-$('doRenew').onclick=async()=>{
-  let m=members.find(x=>x.id===renewId);if(!m)return;
-  let paid=$('renewDate').value,fee=Number($('renewPlan').value||100);
-  try{
-    const months=Math.floor(fee/100);
-    const currentEnd=validityDate(m);
-    // If renewing before expiry, continue from the day after the
-    // existing validity end; otherwise start from the selected renewal date.
-    const base=(currentEnd && currentEnd>=paid)?addDays(currentEnd,1):paid;
-    const newEnd=addMonths(base,months);
-    await rest('/members?id=eq.'+encodeURIComponent(renewId),{
-      method:'PATCH',
-      headers:{'Prefer':'return=minimal'},
-      body:JSON.stringify({paid,fee,validity_end:newEnd})
-    });
-    m.paid=paid;m.fee=fee;m.validity_end=newEnd;
-    render();$('renew').classList.remove('show');
-  }catch(e){alert('Renewal failed: '+e.message)}
+$('doRenew').onclick=()=>{
+  alert('🔒 Membership renewal এখন শুধুমাত্র সফল Razorpay payment-এর পরেই হবে।\n\nAdmin manual Renew দিয়ে আর validity পরিবর্তন করা যাবে না।');
+  $('renew').classList.remove('show');
 };
 
 const MEMBERSHIP_UPI_ID='rakeshsarmistha@ybl';
@@ -1082,6 +1067,13 @@ $('payNow').onclick=async()=>{
       theme:{color:'#137a43'},
       handler:async function(resp){
         try{
+          // Membership validity can change ONLY after a complete Razorpay success response.
+          if(!resp || !resp.razorpay_order_id || !resp.razorpay_payment_id || !resp.razorpay_signature){
+            throw new Error('Incomplete Razorpay success response');
+          }
+          if(resp.razorpay_order_id !== order.order_id){
+            throw new Error('Razorpay order mismatch');
+          }
           const vr=await fetch(SUPABASE_URL+'/functions/v1/'+RAZORPAY_FUNCTION,{
             method:'POST',
             headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},
