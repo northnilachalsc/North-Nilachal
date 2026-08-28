@@ -883,7 +883,13 @@ $('appPayNow').onclick=async()=>{
         }catch(e){$('appPaymentStatus').textContent='❌ Payment হয়েছে, কিন্তু verification সম্পূর্ণ হয়নি।';$('appPaymentStatus').style.color='#b42318';}
       }
     });
-    rz.on('payment.failed',()=>{$('appPaymentStatus').textContent='❌ Payment ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';$('appPaymentStatus').style.color='#b42318';});
+    rz.on('payment.failed',(resp)=>{
+      const er=resp&&resp.error?resp.error:{};
+      const reason=er.description||er.reason||er.code||'Unknown Razorpay payment error';
+      console.warn('Razorpay application payment.failed:',resp);
+      $('appPaymentStatus').textContent='❌ Payment ব্যর্থ হয়েছে: '+reason;
+      $('appPaymentStatus').style.color='#b42318';
+    });
     rz.open();
   }catch(e){$('appPaymentStatus').textContent='❌ '+e.message;$('appPaymentStatus').style.color='#b42318';}
 };
@@ -1104,7 +1110,12 @@ $('payNow').onclick=async()=>{
         }catch(e){alert('❌ Payment হয়েছে, কিন্তু verification সম্পূর্ণ হয়নি। Admin-এর সঙ্গে যোগাযোগ করুন।');}
       }
     });
-    rz.on('payment.failed',()=>alert('❌ Payment ব্যর্থ হয়েছে। আবার চেষ্টা করুন।'));
+    rz.on('payment.failed',(resp)=>{
+      const er=resp&&resp.error?resp.error:{};
+      const reason=er.description||er.reason||er.code||'Unknown Razorpay payment error';
+      console.warn('Razorpay payment.failed:',resp);
+      alert('❌ Payment ব্যর্থ হয়েছে।\n\nকারণ: '+reason+'\n\nআবার চেষ্টা করুন।');
+    });
     rz.open();
   }catch(e){alert('❌ '+e.message)}
 };
