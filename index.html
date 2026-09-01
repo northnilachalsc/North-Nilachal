@@ -457,12 +457,12 @@ function unpackMediaSettings(){
   if(raw.startsWith('{') && raw.includes('"__nnsc_media"')){
     try{
       const b=JSON.parse(raw);
-      if(b.__nnsc_media){settings.logo=b.logo||'';settings.voice=b.voice||'';settings.voiceVolume=(typeof b.voiceVolume==='number'?Math.max(0,Math.min(1,b.voiceVolume)):0.8);settings.birthdayMusic=(b.birthdayMusic!==false);}
+      if(b.__nnsc_media){settings.logo=b.logo||'';settings.voice=b.voice||'';settings.voiceVolume=(typeof b.voiceVolume==='number'?Math.max(0,Math.min(1,b.voiceVolume)):0.8);settings.birthdayMusic=(b.birthdayMusic!==false);if(Object.prototype.hasOwnProperty.call(b,'notice'))settings.notice=String(b.notice||'');}
     }catch(e){console.warn('Media settings decode skipped:',e.message)}
   }
 }
 function packMediaSettings(){
-  return JSON.stringify({__nnsc_media:1,logo:settings.logo||'',voice:settings.voice||'',voiceVolume:(typeof settings.voiceVolume==='number'?Math.max(0,Math.min(1,settings.voiceVolume)):0.8),birthdayMusic:settings.birthdayMusic!==false});
+  return JSON.stringify({__nnsc_media:1,logo:settings.logo||'',voice:settings.voice||'',voiceVolume:(typeof settings.voiceVolume==='number'?Math.max(0,Math.min(1,settings.voiceVolume)):0.8),birthdayMusic:settings.birthdayMusic!==false,notice:settings.notice||''});
 }
 function applyVoice(){
   const a=$('siteVoice'); if(!a)return;
@@ -747,7 +747,6 @@ async function loadData(){
   const settingsPromise=rest('/settings?id=eq.1&select=*&limit=1').then(s=>{
     if(Array.isArray(s)&&s[0])settings={...settings,...s[0]};
     unpackMediaSettings();
-    loadLocalNotice();
     apply(); saveFastCache();
   }).catch(e=>{
     loadLocalNotice();
@@ -1280,12 +1279,10 @@ $('settings').onsubmit=async e=>{
   try{
     // settings is already unpacked when loaded; do not unpack again here,
     // otherwise a deleted audio value can be restored from the old packed logo.
-    // Save only columns that exist in the current settings table.
-    // Notice is saved separately in localStorage so this never fails because
-    // the database has no `notice` column.
+    // Save notice inside the existing settings.logo media bundle, so no new
+    // Supabase column is required and every device receives the same notice.
     const dbSettings={id:1,name:settings.name,reg:settings.reg,logo:packMediaSettings(),pass:settings.pass};
     await rest('/settings?on_conflict=id',{method:'POST',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(dbSettings)});
-    saveLocalNotice();
     saveFastCache();
     apply();
     if($('voiceAdminPreview') && settings.voice){
