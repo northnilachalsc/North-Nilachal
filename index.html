@@ -3,7 +3,7 @@
 #appPaid:disabled{opacity:.75;cursor:not-allowed;background:#f1f1f1;}
 
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#172033}header{background:linear-gradient(135deg,#0d3154,#1976d2);color:#fff;padding:18px;position:sticky;top:0;z-index:5}.head{max-width:1100px;margin:auto;display:flex;align-items:center;gap:14px}.logo{width:64px;height:64px;border-radius:50%;background:#fff;object-fit:cover;border:3px solid #f4b400}.brand h1{margin:0;font-size:23px}.brand small{opacity:.8}nav{max-width:1100px;margin:14px auto 0;display:flex;gap:7px;flex-wrap:wrap}nav button,.btn{border:0;border-radius:9px;padding:10px 13px;font-weight:700;cursor:pointer}nav button{background:#ffffff1b;color:#fff}nav button.active,nav button:hover{background:#fff;color:#123b66}.btn.primary{background:#1976d2;color:#fff}.btn.green{background:#159957;color:#fff}.btn.red{background:#d64545;color:#fff}.btn.light{background:#edf2f7;color:#223}
-main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.section.active{display:block}.card{background:#fff;border-radius:15px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px #0001}.birthday{border-left:5px solid #f4b400;background:#fff9df}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{font-size:14px;color:#6b7a8d}.stat b{display:block;font-size:28px;color:#172033;margin-top:5px}.toolbar{display:flex;gap:9px;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}.toolbar input{flex:1;min-width:220px}.input{padding:11px;border:1px solid #ccd5df;border-radius:8px;width:100%;margin-top:5px}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.photo{width:54px;height:54px;border-radius:50%;object-fit:cover;background:#e8eef5;display:grid;place-items:center;overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #edf0f4;text-align:left;white-space:nowrap}th{background:#f7f9fc;font-size:13px}.tablewrap{overflow:auto}.badge{padding:5px 8px;border-radius:20px;font-size:12px;font-weight:bold}.ok{background:#dcf7e8;color:#137a43}.due{background:#fff0d5;color:#946100}.exp{background:#ffe0e0;color:#a82f2f}.modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.box{background:#fff;border-radius:16px;padding:20px;width:min(520px,100%);max-height:90vh;overflow:auto}.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px}.hint{background:#eef6ff;padding:12px;border-radius:9px;color:#24537f;font-size:14px}
+main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.section.active{display:block}.card{background:#fff;border-radius:15px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px #0001}.birthday{border-left:5px solid #f4b400;background:#fff9df}.upcoming-birthday{border-left:5px solid #1976d2;background:#eef6ff;cursor:pointer}.upcoming-birthday .next-bday-name{font-size:22px;font-weight:900;color:#173b63;margin:7px 0}.upcoming-birthday .next-bday-meta{color:#52606d;font-size:14px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{font-size:14px;color:#6b7a8d}.stat b{display:block;font-size:28px;color:#172033;margin-top:5px}.toolbar{display:flex;gap:9px;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}.toolbar input{flex:1;min-width:220px}.input{padding:11px;border:1px solid #ccd5df;border-radius:8px;width:100%;margin-top:5px}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.photo{width:54px;height:54px;border-radius:50%;object-fit:cover;background:#e8eef5;display:grid;place-items:center;overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #edf0f4;text-align:left;white-space:nowrap}th{background:#f7f9fc;font-size:13px}.tablewrap{overflow:auto}.badge{padding:5px 8px;border-radius:20px;font-size:12px;font-weight:bold}.ok{background:#dcf7e8;color:#137a43}.due{background:#fff0d5;color:#946100}.exp{background:#ffe0e0;color:#a82f2f}.modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.box{background:#fff;border-radius:16px;padding:20px;width:min(520px,100%);max-height:90vh;overflow:auto}.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px}.hint{background:#eef6ff;padding:12px;border-radius:9px;color:#24537f;font-size:14px}
 @media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.full{grid-column:auto}.brand h1{font-size:18px}th,td{font-size:12px;padding:8px}}
 
 /* Birthday celebration */
@@ -66,7 +66,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 </div>
 <audio id="siteVoice" preload="auto"></audio>
 
-<section id="home" class="section active"><div id="loadingNotice" class="card hint" style="display:none;text-align:center;font-weight:700">⏳ Member details are loading…</div><div id="birthdayTop"></div><div class="grid"><div class="card stat" id="totalMembersCard" role="button" tabindex="0" title="View all members" style="cursor:pointer">Total Members<b id="total">0</b></div><div class="card stat" id="birthdayTodayCard" role="button" tabindex="0" title="View today's birthdays" style="cursor:pointer">Birthdays Today<b id="today">0</b></div><div class="card stat" id="renewalDueCard" role="button" tabindex="0" title="View renewal due members" style="cursor:pointer">Renewal Due<b id="due">0</b></div><div class="card stat" id="expiredCard" role="button" tabindex="0" title="View expired members" style="cursor:pointer">Expired<b id="expired">0</b></div></div><div class="card"><h2>🎂 Today’s Birthdays</h2><div id="birthList"></div></div></section>
+<section id="home" class="section active"><div id="loadingNotice" class="card hint" style="display:none;text-align:center;font-weight:700">⏳ Member details are loading…</div><div id="birthdayTop"></div><div class="grid"><div class="card stat" id="totalMembersCard" role="button" tabindex="0" title="View all members" style="cursor:pointer">Total Members<b id="total">0</b></div><div class="card stat" id="birthdayTodayCard" role="button" tabindex="0" title="View today’s birthdays" style="cursor:pointer">Birthdays Today<b id="birthdayTodayCount">0</b></div><div class="card stat" id="renewalDueCard" role="button" tabindex="0" title="View renewal due members" style="cursor:pointer">Renewal Due<b id="due">0</b></div><div class="card stat" id="expiredCard" role="button" tabindex="0" title="View expired members" style="cursor:pointer">Expired<b id="expired">0</b></div></div><div class="card upcoming-birthday" id="upcomingBirthdayCard" role="button" tabindex="0" title="Click to view next member birthday"><h2>🎂 Upcoming Birthday</h2><div id="upcomingBirthdayInfo" style="display:none;margin-top:7px"><b class="next-bday-name" id="nextBdayName"></b><div class="next-bday-meta" id="nextBdayMeta"></div></div></div></section>
 <section id="members" class="section"><div class="toolbar"><input id="search" class="input" placeholder="Name/Mobile দিয়ে খুঁজুন"><button id="addBtn" class="btn primary" style="display:none">+ Add Member</button></div><div class="card tablewrap"><table><thead><tr><th>Photo</th><th>Member ID</th><th id="memberTypeHead" style="display:none">Member Type</th><th>Name</th><th>Gender</th><th>Blood Group</th><th id="dobHead">Date of Birth</th><th id="feeHead" style="display:none">Fee</th><th>Payment Date</th><th>Validity</th><th>Aadhaar (Last 4)</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div></section>
 
 <section id="apply" class="section">
@@ -294,6 +294,13 @@ function validityDate(m){
   return addMonths(paid,months);
 }
 function fmt(d){return d?new Date(d+'T00:00:00').toLocaleDateString('en-IN',{month:'long',year:'numeric'}):'—'}
+function fmtDOB(d){
+  const v=String(d||'').slice(0,10);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(v))return '—';
+  const [y,m,day]=v.split('-').map(Number);
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return day+' '+months[m-1]+' '+y;
+}
 function fmtDateTime(d){return d?new Date(d).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}):'—'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function st(m){
@@ -311,6 +318,55 @@ function st(m){
   return ['exp','Expired'];
 }
 function bd(m){if(!m.dob)return false;let d=new Date(m.dob+'T00:00:00');return d.getMonth()===today.getMonth()&&d.getDate()===today.getDate()}
+function allBirthdays(){
+  return members.filter(m=>m.dob).map(m=>{
+    const dob=new Date(String(m.dob).slice(0,10)+'T00:00:00');
+    return {m, month:dob.getMonth(), day:dob.getDate()};
+  }).sort((a,b)=>a.month-b.month||a.day-b.day||String(a.m.name||'').localeCompare(String(b.m.name||''),'bn'));
+}
+function nextBirthday(){
+  const list=allBirthdays();
+  if(!list.length)return null;
+
+  // Find the next birthday chronologically from today.
+  // Birthdays later in the current month (for example September)
+  // must be shown before moving to the next month.
+  const currentMonth=today.getMonth();
+  const currentDay=today.getDate();
+
+  const laterThisMonth=list
+    .filter(x=>x.month===currentMonth && x.day>currentDay)
+    .sort((a,b)=>a.day-b.day||String(a.m.name||'').localeCompare(String(b.m.name||''),'bn'));
+  if(laterThisMonth.length)return laterThisMonth[0];
+
+  for(let offset=1;offset<=11;offset++){
+    const targetMonth=(currentMonth+offset)%12;
+    const inMonth=list
+      .filter(x=>x.month===targetMonth)
+      .sort((a,b)=>a.day-b.day||String(a.m.name||'').localeCompare(String(b.m.name||''),'bn'));
+    if(inMonth.length)return inMonth[0];
+  }
+
+  // Only today's birthday(s) remain in the year: show the next one
+  // after the year rolls over.
+  const todayBirthday=list
+    .filter(x=>x.month===currentMonth && x.day===currentDay)
+    .sort((a,b)=>String(a.m.name||'').localeCompare(String(b.m.name||''),'bn'));
+  if(todayBirthday.length)return todayBirthday[0];
+
+  return list[0];
+}
+function renderUpcomingBirthday(){
+  const name=$('nextBdayName'), meta=$('nextBdayMeta');
+  if(!name||!meta)return;
+  const x=nextBirthday();
+  if(!x){name.textContent='';meta.textContent='কোনো Date of Birth পাওয়া যায়নি।';return;}
+  const months=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+  name.textContent='🎂 '+(x.m.name||'Member');
+  meta.textContent=months[x.month]+' '+x.day;
+}
+function renderAllBirthdays(){return;}
+function nowDate(){return new Date()}
 
 function getMemberId(m){
   return String((m&&m.member_id) ?? '').trim().replace(/-/g,'');
@@ -522,7 +578,7 @@ function showRenewalDueFromHome(){
       '<td><b>'+esc(id)+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+(isDonor(m)?'<span class="badge" style="background:#fff0c2;color:#8a5a00">⭐ Donor</span>':'<span class="badge" style="background:#eef2f7;color:#52606d">Member</span>')+'</td><td><b>'+esc(m.name)+'</b><small style="display:block;color:#778">'+esc(m.phone||'')+
       (m.phone?'<a class="wa-btn" href="https://wa.me/'+String(m.phone).replace(/\D/g,'')+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')+
       '</small></td><td><b>'+esc(m.gender||'Male')+'</b></td><td><b>'+esc(m.blood||'—')+'</b></td>'+
-      '<td style="display:'+(admin?'table-cell':'none')+'">'+fmt(m.dob)+'</td><td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td>'+
+      '<td style="display:'+(admin?'table-cell':'none')+'">'+fmtDOB(m.dob)+'</td><td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td>'+
       '<td>'+fmt(m.paid)+'</td><td>'+ (validityDate(m)?fmt(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
       '<td>XXXX-XXXX-'+esc(String(m.aadhaar||'').slice(-4)||'—')+'</td><td><span class="badge '+s[0]+'">'+s[1]+'</span></td>'+
       '<td>'+ (admin?'<button class="btn light" onclick="editM(\''+m.id+'\')">Edit</button> <button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 Renew</button> <button class="btn red" onclick="delM(\''+m.id+'\')">Delete</button>':'<button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 Renew Membership</button>')+'</td></tr>';
@@ -544,7 +600,7 @@ function showExpiredFromHome(){
       '<td><b>'+esc(id)+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+(isDonor(m)?'<span class="badge" style="background:#fff0c2;color:#8a5a00">⭐ Donor</span>':'<span class="badge" style="background:#eef2f7;color:#52606d">Member</span>')+'</td>'+
       '<td><b>'+esc(m.name)+'</b><small style="display:block;color:#778">'+esc(m.phone||'')+(m.phone?'<a class="wa-btn" href="https://wa.me/'+String(m.phone).replace(/\D/g,'')+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')+'</small></td>'+
       '<td><b>'+esc(m.gender||'Male')+'</b></td><td><b>'+esc(m.blood||'—')+'</b></td>'+
-      '<td style="display:'+(admin?'table-cell':'none')+'">'+fmt(m.dob)+'</td><td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td>'+
+      '<td style="display:'+(admin?'table-cell':'none')+'">'+fmtDOB(m.dob)+'</td><td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td>'+
       '<td>'+fmt(m.paid)+'</td><td>'+(validityDate(m)?fmt(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
       '<td>XXXX-XXXX-'+esc(String(m.aadhaar||'').slice(-4)||'—')+'</td><td><span class="badge '+status[0]+'">'+status[1]+'</span></td>'+
       '<td>'+(admin?'<button class="btn light" onclick="editM(\''+m.id+'\')">Edit</button> <button class="btn green" onclick="openR(\''+m.id+'\')">Renew</button> <button class="btn red" onclick="delM(\''+m.id+'\')">Delete</button>':'<button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 Pay Membership</button>')+'</td></tr>';
@@ -564,11 +620,26 @@ function showAllMembersFromHome(){
 // These handlers are intentionally separate from the Birthday click handler below.
 function bindDashboardCards(){
   const totalCard=$('totalMembersCard');
+  const birthdayTodayCard=$('birthdayTodayCard');
+  const birthdayTop=$('birthdayTop');
   const dueCard=$('renewalDueCard');
   const expiredCard=$('expiredCard');
+  const upcomingCard=$('upcomingBirthdayCard');
   if(totalCard){
     totalCard.onclick=showAllMembersFromHome;
     totalCard.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showAllMembersFromHome();}};
+  }
+  if(birthdayTodayCard){
+    birthdayTodayCard.onclick=showBirthdayCelebration;
+    birthdayTodayCard.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showBirthdayCelebration();}};
+  }
+  // Today's birthday banner is also clickable: open the celebration popup and music.
+  if(birthdayTop){
+    birthdayTop.onclick=showBirthdayCelebration;
+    birthdayTop.style.cursor='pointer';
+    birthdayTop.setAttribute('role','button');
+    birthdayTop.setAttribute('tabindex','0');
+    birthdayTop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showBirthdayCelebration();}};
   }
   if(dueCard){
     dueCard.onclick=showRenewalDueFromHome;
@@ -578,6 +649,19 @@ function bindDashboardCards(){
     expiredCard.onclick=showExpiredFromHome;
     expiredCard.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showExpiredFromHome();}};
   }
+  if(upcomingCard){
+    let upcomingTimer=null;
+    const show=()=>{
+      renderUpcomingBirthday();
+      const info=$('upcomingBirthdayInfo');
+      if(!info)return;
+      if(upcomingTimer)clearTimeout(upcomingTimer);
+      info.style.display='block';
+      upcomingTimer=setTimeout(()=>{info.style.display='none';},5000);
+    };
+    upcomingCard.onclick=show;
+    upcomingCard.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show();}};
+  }
 }
 bindDashboardCards();
 
@@ -585,11 +669,10 @@ function render(){
   const __renderStart=performance.now();
   const b=members.filter(bd);
   $('total').textContent=members.length;
-  $('today').textContent=b.length;
+  $('birthdayTodayCount').textContent=b.length;
   $('due').textContent=members.filter(m=>st(m)[0]==='due').length;
   $('expired').textContent=members.filter(m=>st(m)[0]==='exp').length;
   $('birthdayTop').innerHTML=b.length?'<div class="card birthday"><h2>🎉 Birthdays Today!</h2><b>'+b.map(x=>esc(x.name)).join(', ')+'</b></div>':'';
-  $('birthList').innerHTML=b.length?b.map(x=>'<p><b>'+esc(x.name)+'</b> — 🎂 Birthday Today</p>').join(''):'<p>No member has a birthday today.</p>';
   rows();
 }
 function rows(){
@@ -602,7 +685,7 @@ function rows(){
       '<td><b>'+esc(id)+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+(isDonor(m)?'<span class="badge" style="background:#fff0c2;color:#8a5a00">⭐ Donor</span>':'<span class="badge" style="background:#eef2f7;color:#52606d">Member</span>')+'</td><td><b>'+esc(m.name)+'<small style="display:block;color:#778">'+esc(m.phone||'')+
         (m.phone?'<a class="wa-btn" href="https://wa.me/'+String(m.phone).replace(/\D/g,'')+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')+
         '</small></td>'+
-      '<td><b>'+esc(m.gender||'Male')+'</b></td><td><b>'+esc(m.blood||'—')+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+fmt(m.dob)+'</td>'+
+      '<td><b>'+esc(m.gender||'Male')+'</b></td><td><b>'+esc(m.blood||'—')+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+fmtDOB(m.dob)+'</td>'+
       '<td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td><td>'+fmt(m.paid)+'</td>'+
       '<td>'+ (validityDate(m)?fmt(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
       '<td>XXXX-XXXX-'+esc(String(m.aadhaar||'').slice(-4)||'—')+'</td><td><span class="badge '+s[0]+'">'+s[1]+'</span></td>'+
@@ -1313,7 +1396,7 @@ function buildAllMemberForms(){
   const pages=list.map((m,i)=>{
     const id=getMemberId(m)||'—';
     const gender=m.gender||'Male';
-    const dob=fmt(m.dob);
+    const dob=fmtDOB(m.dob);
     const fee=Number(m.fee||0);
     const paid=fmt(m.paid);
     const valid=fmt(validityDate(m));
@@ -1533,7 +1616,10 @@ function playBirthdayMusic(){
   try{
     const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return;
     birthdayAudioCtx=birthdayAudioCtx||new AC();
-    if(birthdayAudioCtx.state==='suspended')birthdayAudioCtx.resume();
+    if(birthdayAudioCtx.state==='suspended'){
+      const resumed=birthdayAudioCtx.resume();
+      if(resumed&&resumed.catch)resumed.catch(()=>{});
+    }
     const notes=[
       [261.63,.00,.28],[261.63,.30,.16],[293.66,.48,.42],[261.63,.92,.42],[349.23,1.36,.42],[329.63,1.80,.70],
       [261.63,2.60,.28],[261.63,2.90,.16],[293.66,3.08,.42],[261.63,3.52,.42],[392.00,3.96,.42],[349.23,4.40,.70],
@@ -1579,17 +1665,13 @@ function closeBirthdayCelebration(){if(window.birthdayTimer)clearInterval(window
 document.addEventListener('click',function(e){
   if(e.target.id==='birthdayClose' || e.target.id==='birthdayModal'){closeBirthdayCelebration();return;}
   if(e.target.closest && e.target.closest('#birthdayModal')) return;
-  const el=e.target.closest && (e.target.closest('#birthdayTodayCard')||e.target.closest('#birthdayTop')||e.target.closest('#birthList')||e.target.closest('#home h2'));
-  if(!el)return;
-  if(/birthday|জন্মদিন/i.test(el.textContent||'')){e.preventDefault();showBirthdayCelebration();}
+  return;
 });
 
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){closeBirthdayCelebration();return;}
   if(e.key!=='Enter'&&e.key!==' ')return;
-  const el=e.target.closest && (e.target.closest('#birthdayTodayCard')||e.target.closest('#birthdayTop')||e.target.closest('#birthList')||e.target.closest('#home h2'));
-  if(!el)return;
-  if(/birthday|জন্মদিন/i.test(el.textContent||'')){e.preventDefault();showBirthdayCelebration();}
+  return;
 });
 
 
