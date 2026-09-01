@@ -5,6 +5,9 @@
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#172033}header{background:linear-gradient(135deg,#0d3154,#1976d2);color:#fff;padding:18px;position:sticky;top:0;z-index:5}.head{max-width:1100px;margin:auto;display:flex;align-items:center;gap:14px}.logo{width:64px;height:64px;border-radius:50%;background:#fff;object-fit:cover;border:3px solid #f4b400}.brand h1{margin:0;font-size:23px}.brand small{opacity:.8}nav{max-width:1100px;margin:14px auto 0;display:flex;gap:7px;flex-wrap:wrap}nav button,.btn{border:0;border-radius:9px;padding:10px 13px;font-weight:700;cursor:pointer}nav button{background:#ffffff1b;color:#fff}nav button.active,nav button:hover{background:#fff;color:#123b66}.btn.primary{background:#1976d2;color:#fff}.btn.green{background:#159957;color:#fff}.btn.red{background:#d64545;color:#fff}.btn.light{background:#edf2f7;color:#223}
 main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.section.active{display:block}.card{background:#fff;border-radius:15px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px #0001}.birthday{border-left:5px solid #f4b400;background:#fff9df}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{font-size:14px;color:#6b7a8d}.stat b{display:block;font-size:28px;color:#172033;margin-top:5px}.toolbar{display:flex;gap:9px;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}.toolbar input{flex:1;min-width:220px}.input{padding:11px;border:1px solid #ccd5df;border-radius:8px;width:100%;margin-top:5px}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.photo{width:54px;height:54px;border-radius:50%;object-fit:cover;background:#e8eef5;display:grid;place-items:center;overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #edf0f4;text-align:left;white-space:nowrap}th{background:#f7f9fc;font-size:13px}.tablewrap{overflow:auto}.badge{padding:5px 8px;border-radius:20px;font-size:12px;font-weight:bold}.ok{background:#dcf7e8;color:#137a43}.due{background:#fff0d5;color:#946100}.exp{background:#ffe0e0;color:#a82f2f}.modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.box{background:#fff;border-radius:16px;padding:20px;width:min(520px,100%);max-height:90vh;overflow:auto}.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px}.hint{background:#eef6ff;padding:12px;border-radius:9px;color:#24537f;font-size:14px}
 @media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.full{grid-column:auto}.brand h1{font-size:18px}th,td{font-size:12px;padding:8px}}
+
+/* Birthday celebration */
+.bday-modal{position:fixed;inset:0;background:rgba(16,20,35,.82);z-index:100;display:none;align-items:center;justify-content:center;padding:16px;overflow:hidden}.bday-modal.show{display:flex}.bday-box{position:relative;background:linear-gradient(145deg,#fff,#fff8fb);border-radius:28px;width:min(560px,100%);padding:32px 22px 26px;text-align:center;box-shadow:0 25px 80px #0006;overflow:hidden;animation:bdayPop .55s cubic-bezier(.2,1.4,.4,1)}.bday-box h2{margin:4px 0 8px;font-size:30px}.bday-name{font-size:34px;font-weight:900;margin:12px 0 8px}.bday-message{font-size:17px;line-height:1.7;color:#4c566a}.bday-cake{font-size:76px;animation:cakeBounce 1.2s ease-in-out infinite}.bday-close{position:absolute;right:12px;top:10px;border:0;background:#f1f3f7;border-radius:50%;width:38px;height:38px;font-size:22px;cursor:pointer}.confetti{position:absolute;inset:-20px;pointer-events:none}.confetti i{position:absolute;width:9px;height:18px;animation:confettiFall 2.8s linear infinite;opacity:.9}.balloon{position:absolute;font-size:42px;animation:balloonFloat 3.5s ease-in-out infinite}.balloon.b1{left:18px;top:70px}.balloon.b2{right:20px;top:95px;animation-delay:.5s}.balloon.b3{left:45px;bottom:30px;animation-delay:1s}.balloon.b4{right:45px;bottom:25px;animation-delay:1.4s}@keyframes bdayPop{from{transform:scale(.65) rotate(-3deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}@keyframes cakeBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes balloonFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-15px) rotate(4deg)}}@keyframes confettiFall{0%{transform:translateY(-30px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(620px) rotate(720deg);opacity:0}}
 </style>
 <style id="voice-control-style">
 .voice-control{position:fixed;right:14px;bottom:18px;z-index:30;background:#fff;border-radius:14px;box-shadow:0 4px 18px #0003;padding:8px 10px;display:flex;align-items:center;gap:8px}.voice-btn{border:0;background:#173b63;color:#fff;border-radius:10px;width:42px;height:42px;font-size:20px;cursor:pointer}.voice-slider{width:90px;accent-color:#173b63}.voice-status{font-size:11px;color:#52606d;min-width:42px;text-align:center}@media(max-width:760px){.voice-control{right:10px;bottom:10px;padding:6px}.voice-slider{width:65px}}
@@ -63,7 +66,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 </div>
 <audio id="siteVoice" preload="auto"></audio>
 
-<section id="home" class="section active"><div id="loadingNotice" class="card hint" style="display:none;text-align:center;font-weight:700">⏳ Member details are loading…</div><div id="birthdayTop"></div><div class="grid"><div class="card stat" id="totalMembersCard" role="button" tabindex="0" title="View all members">Total Members<b id="total">0</b></div><div class="card stat">Birthdays Today<b id="today">0</b></div><div class="card stat" id="renewalDueCard" role="button" tabindex="0" title="View renewal due members">Renewal Due<b id="due">0</b></div><div class="card stat">Expired<b id="expired">0</b></div></div><div class="card"><h2>🎂 Today’s Birthdays</h2><div id="birthList"></div></div></section>
+<section id="home" class="section active"><div id="loadingNotice" class="card hint" style="display:none;text-align:center;font-weight:700">⏳ Member details are loading…</div><div id="birthdayTop"></div><div class="grid"><div class="card stat" id="totalMembersCard" role="button" tabindex="0" title="View all members" style="cursor:pointer">Total Members<b id="total">0</b></div><div class="card stat" id="birthdayTodayCard" role="button" tabindex="0" title="View today's birthdays" style="cursor:pointer">Birthdays Today<b id="today">0</b></div><div class="card stat" id="renewalDueCard" role="button" tabindex="0" title="View renewal due members" style="cursor:pointer">Renewal Due<b id="due">0</b></div><div class="card stat" id="expiredCard" role="button" tabindex="0" title="View expired members" style="cursor:pointer">Expired<b id="expired">0</b></div></div><div class="card"><h2>🎂 Today’s Birthdays</h2><div id="birthList"></div></div></section>
 <section id="members" class="section"><div class="toolbar"><input id="search" class="input" placeholder="Name/Mobile দিয়ে খুঁজুন"><button id="addBtn" class="btn primary" style="display:none">+ Add Member</button></div><div class="card tablewrap"><table><thead><tr><th>Photo</th><th>Member ID</th><th id="memberTypeHead" style="display:none">Member Type</th><th>Name</th><th>Gender</th><th>Blood Group</th><th id="dobHead">Date of Birth</th><th id="feeHead" style="display:none">Fee</th><th>Payment Date</th><th>Validity</th><th>Aadhaar (Last 4)</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div></section>
 
 <section id="apply" class="section">
@@ -99,7 +102,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
     </form>
   </div>
 </section>
-<section id="admin" class="section"><div class="card"><h2>🔐 Admin Settings</h2><div class="hint">Only the Admin can make changes here. Others can only view.</div><form id="settings" class="form" style="margin-top:15px"><label>ক্লাবের Name<input id="clubName" class="input" required></label><label>Registration Number<input id="regNumber" class="input" value="S/1L/81249" required></label><label class="full">Scrolling Notice<input id="scrollNotice" class="input" placeholder="এখানে চলমান নোটিশ লিখুন"></label><label>New Password<input id="newPass" class="input" type="password" placeholder="Enter only if you want to change it"></label><label class="full">Logo<input id="logoFile" class="input" type="file" accept="image/*"><img id="logoPreview" class="photo" style="width:90px;height:90px;margin-top:6px"></label><label class="full">🎙️ Voice-over / Welcome Audio<input id="voiceFile" class="input" type="file" accept="audio/*"><small style="display:block;color:#667;margin-top:5px">Admin এখান থেকে যেকোনো সময় নতুন MP3/Audio বদলাতে পারবেন। Save Settings চাপলে নতুন Voice-over সবার জন্য চালু হবে।</small><audio id="voiceAdminPreview" controls style="width:100%;margin-top:8px;display:none"></audio><button type="button" id="deleteVoiceBtn" class="btn red" style="margin-top:8px">🗑️ Delete Audio</button><small id="voiceDeleteStatus" style="display:block;color:#a82f2f;margin-top:5px"></small></label><label>🎚️ Voice-over Volume<input id="voiceVolumeAdmin" class="input" type="range" min="0" max="100" step="5" value="80"><small id="voiceVolumeAdminText" style="display:block;color:#667;margin-top:5px">80% — এই ভলিউমেই সবার কাছে Voice-over চলবে।</small></label><div class="full actions"><button type="submit" class="btn primary">Save Settings</button><button type="button" id="logout" class="btn light">Logout</button></div></form></div>
+<section id="admin" class="section"><div class="card"><h2>🔐 Admin Settings</h2><div class="hint">Only the Admin can make changes here. Others can only view.</div><form id="settings" class="form" style="margin-top:15px"><label>ক্লাবের Name<input id="clubName" class="input" required></label><label>Registration Number<input id="regNumber" class="input" value="S/1L/81249" required></label><label class="full">Scrolling Notice<input id="scrollNotice" class="input" placeholder="এখানে চলমান নোটিশ লিখুন"></label><label>New Password<input id="newPass" class="input" type="password" placeholder="Enter only if you want to change it"></label><label class="full">Logo<input id="logoFile" class="input" type="file" accept="image/*"><img id="logoPreview" class="photo" style="width:90px;height:90px;margin-top:6px"></label><label class="full">🎙️ Voice-over / Welcome Audio<input id="voiceFile" class="input" type="file" accept="audio/*"><small style="display:block;color:#667;margin-top:5px">Admin এখান থেকে যেকোনো সময় নতুন MP3/Audio বদলাতে পারবেন। Save Settings চাপলে নতুন Voice-over সবার জন্য চালু হবে।</small><audio id="voiceAdminPreview" controls style="width:100%;margin-top:8px;display:none"></audio><button type="button" id="deleteVoiceBtn" class="btn red" style="margin-top:8px">🗑️ Delete Audio</button><small id="voiceDeleteStatus" style="display:block;color:#a82f2f;margin-top:5px"></small></label><label>🎂 Happy Birthday Music <select id="birthdayMusicAdmin" class="input"><option value="on">ON — Birthday music চালু</option><option value="off">OFF — Birthday music বন্ধ</option></select><small style="display:block;color:#667;margin-top:5px">Birthday popup খুললে ছোট Happy Birthday music বাজবে। Admin এখান থেকে ON/OFF করতে পারবেন।</small></label><label>🎚️ Voice-over Volume<input id="voiceVolumeAdmin" class="input" type="range" min="0" max="100" step="5" value="80"><small id="voiceVolumeAdminText" style="display:block;color:#667;margin-top:5px">80% — এই ভলিউমেই সবার কাছে Voice-over চলবে।</small></label><div class="full actions"><button type="submit" class="btn primary">Save Settings</button><button type="button" id="logout" class="btn light">Logout</button></div></form></div>
 
 <div class="card">
   <h2>📋 Pending Membership Applications <span id="pendingCount" class="badge due">0</span></h2>
@@ -131,6 +134,18 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 <small style="display:block;color:#667;margin-top:5px">₹100 = 1 month. বেশি টাকা দিলে সেই অনুযায়ী বেশি মাসের validity হবে।</small>
 </label><label>Payment Date *<input id="paid" class="input" type="date" required></label><label>Address<input id="address" class="input"></label><label>Photo<input id="photo" class="input" type="file" accept="image/*" title="Maximum 100 KB"><div style="margin-top:7px;padding:9px 10px;border-radius:8px;background:#fff1f1;border:1px solid #e6a3a3;color:#b42318;font-weight:700;font-size:14px">⚠️ ছবির সর্বোচ্চ সাইজ: <b>100 KB</b><br>100 KB-এর বেশি ছবি আপলোড করা যাবে না।</div><img id="memberPreview" class="photo" style="width:90px;height:90px;margin-top:6px"><button type="button" id="deleteMemberPhotoBtn" class="btn red" style="margin-top:8px;display:none">🗑️ Delete Photo</button><small id="memberPhotoDeleteStatus" style="display:block;color:#a82f2f;margin-top:5px"></small></label><div class="full actions"><button type="button" id="cancelAdd" class="btn light">Cancel</button><button class="btn primary">Save Member</button></div></form></div></section>
 </main>
+<div id="birthdayModal" class="bday-modal" role="dialog" aria-modal="true" aria-labelledby="birthdayTitle">
+  <div class="bday-box">
+    <button class="bday-close" id="birthdayClose" aria-label="Close">×</button>
+    <div class="confetti" id="birthdayConfetti"></div>
+    <div class="balloon b1">🎈</div><div class="balloon b2">🎈</div><div class="balloon b3">🎈</div><div class="balloon b4">🎈</div>
+    <div class="bday-cake">🎂</div>
+    <h2 id="birthdayTitle">🎉 শুভ জন্মদিন! 🎉</h2>
+    <div class="bday-name" id="birthdayName"></div>
+    <div class="bday-message" id="birthdayMessage"></div>
+    <div style="margin-top:18px;font-weight:800">❤️ নর্থ নীলাচল স্পোটিং সেন্টার পরিবারের পক্ষ থেকে</div>
+  </div>
+</div>
 <div id="login" class="modal"><div class="box"><h2>🔒 Admin Login</h2><p>For Admin only.</p><input id="loginPass" class="input" type="password" placeholder="Password"><p id="loginErr" style="color:#c33"></p><div class="actions"><button id="closeLogin" class="btn light">Cancel</button><button id="doLogin" class="btn primary">Login</button></div></div></div>
 
 <div id="payment" class="modal"><div class="box">
@@ -167,7 +182,7 @@ const RAZORPAY_FUNCTION='Create-payment';
 
 let members=[];
 let applications=[];
-let settings={name:'North Nilachal Sporting Center',reg:'S/1L/81249',logo:'',voice:'',voiceVolume:0.8,pass:'1234',notice:'নর্থ নীলাচল স্পোটিং সেন্টারের সকল সদস্যকে মেম্বারশিপের তথ্য যাচাই ও সময়মতো মেম্বারশিপ নবীকরণ করার জন্য অনুরোধ করা হচ্ছে।'};
+let settings={name:'North Nilachal Sporting Center',reg:'S/1L/81249',logo:'',voice:'',voiceVolume:0.8,birthdayMusic:true,pass:'1234',notice:'নর্থ নীলাচল স্পোটিং সেন্টারের সকল সদস্যকে মেম্বারশিপের তথ্য যাচাই ও সময়মতো মেম্বারশিপ নবীকরণ করার জন্য অনুরোধ করা হচ্ছে।'};
 let admin=false,logoData='',memberPhoto='',appPhotoData='',renewId='',paymentId='';
 
 const $=x=>document.getElementById(x);
@@ -442,12 +457,12 @@ function unpackMediaSettings(){
   if(raw.startsWith('{') && raw.includes('"__nnsc_media"')){
     try{
       const b=JSON.parse(raw);
-      if(b.__nnsc_media){settings.logo=b.logo||'';settings.voice=b.voice||'';settings.voiceVolume=(typeof b.voiceVolume==='number'?Math.max(0,Math.min(1,b.voiceVolume)):0.8);}
+      if(b.__nnsc_media){settings.logo=b.logo||'';settings.voice=b.voice||'';settings.voiceVolume=(typeof b.voiceVolume==='number'?Math.max(0,Math.min(1,b.voiceVolume)):0.8);settings.birthdayMusic=(b.birthdayMusic!==false);}
     }catch(e){console.warn('Media settings decode skipped:',e.message)}
   }
 }
 function packMediaSettings(){
-  return JSON.stringify({__nnsc_media:1,logo:settings.logo||'',voice:settings.voice||'',voiceVolume:(typeof settings.voiceVolume==='number'?Math.max(0,Math.min(1,settings.voiceVolume)):0.8)});
+  return JSON.stringify({__nnsc_media:1,logo:settings.logo||'',voice:settings.voice||'',voiceVolume:(typeof settings.voiceVolume==='number'?Math.max(0,Math.min(1,settings.voiceVolume)):0.8),birthdayMusic:settings.birthdayMusic!==false});
 }
 function applyVoice(){
   const a=$('siteVoice'); if(!a)return;
@@ -455,6 +470,7 @@ function applyVoice(){
   if(src && a.src!==src){a.src=src; a.load();}
   const vol=(typeof settings.voiceVolume==='number'?Math.max(0,Math.min(1,settings.voiceVolume)):0.8);
   a.volume=vol; a.muted=vol===0;
+  if($('birthdayMusicAdmin'))$('birthdayMusicAdmin').value=settings.birthdayMusic!==false?'on':'off';
   if($('voiceVolumeAdmin')){
     $('voiceVolumeAdmin').value=String(Math.round(vol*100));
     $('voiceVolumeAdminText').textContent=Math.round(vol*100)+'% — এই ভলিউমেই সবার কাছে Voice-over চলবে।';
@@ -514,11 +530,28 @@ function showRenewalDueFromHome(){
   if(list.length) requestAnimationFrame(()=>loadMemberPhotosFast(list));
   window.scrollTo(0,0);
 }
-$('renewalDueCard').onclick=showRenewalDueFromHome;
-$('renewalDueCard').onkeydown=e=>{
-  if(e.key==='Enter'||e.key===' '){e.preventDefault();showRenewalDueFromHome();}
-};
-
+function showExpiredFromHome(){
+  openTab('members');
+  const s=$('search');
+  if(s)s.value='';
+  const list=sortedMembers(members.filter(m=>st(m)[0]==='exp'));
+  $('dobHead').style.display=admin?'table-cell':'none';
+  $('feeHead').style.display=admin?'table-cell':'none';
+  if($('memberTypeHead'))$('memberTypeHead').style.display=admin?'table-cell':'none';
+  $('rows').innerHTML=list.length?list.map(m=>{
+    let status=st(m),id=getMemberId(m)||'—';
+    return '<tr><td><div class="photo member-photo" data-photo-id="'+esc(String(m.id||''))+'">👤</div></td>'+
+      '<td><b>'+esc(id)+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+(isDonor(m)?'<span class="badge" style="background:#fff0c2;color:#8a5a00">⭐ Donor</span>':'<span class="badge" style="background:#eef2f7;color:#52606d">Member</span>')+'</td>'+
+      '<td><b>'+esc(m.name)+'</b><small style="display:block;color:#778">'+esc(m.phone||'')+(m.phone?'<a class="wa-btn" href="https://wa.me/'+String(m.phone).replace(/\D/g,'')+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')+'</small></td>'+
+      '<td><b>'+esc(m.gender||'Male')+'</b></td><td><b>'+esc(m.blood||'—')+'</b></td>'+
+      '<td style="display:'+(admin?'table-cell':'none')+'">'+fmt(m.dob)+'</td><td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td>'+
+      '<td>'+fmt(m.paid)+'</td><td>'+(validityDate(m)?fmt(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
+      '<td>XXXX-XXXX-'+esc(String(m.aadhaar||'').slice(-4)||'—')+'</td><td><span class="badge '+status[0]+'">'+status[1]+'</span></td>'+
+      '<td>'+(admin?'<button class="btn light" onclick="editM(\''+m.id+'\')">Edit</button> <button class="btn green" onclick="openR(\''+m.id+'\')">Renew</button> <button class="btn red" onclick="delM(\''+m.id+'\')">Delete</button>':'<button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 Pay Membership</button>')+'</td></tr>';
+  }).join(''):'<tr><td colspan="13">No expired members.</td></tr>';
+  if(list.length)requestAnimationFrame(()=>loadMemberPhotosFast(list));
+  window.scrollTo(0,0);
+}
 function showAllMembersFromHome(){
   openTab('members');
   const s=$('search');
@@ -526,13 +559,27 @@ function showAllMembersFromHome(){
   rows();
   window.scrollTo(0,0);
 }
-$('totalMembersCard').onclick=showAllMembersFromHome;
-$('totalMembersCard').onkeydown=e=>{
-  if(e.key==='Enter'||e.key===' '){
-    e.preventDefault();
-    showAllMembersFromHome();
+// Home dashboard cards: each card has its own action.
+// Total Members -> all members; Renewal Due -> due members; Expired -> expired members.
+// These handlers are intentionally separate from the Birthday click handler below.
+function bindDashboardCards(){
+  const totalCard=$('totalMembersCard');
+  const dueCard=$('renewalDueCard');
+  const expiredCard=$('expiredCard');
+  if(totalCard){
+    totalCard.onclick=showAllMembersFromHome;
+    totalCard.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showAllMembersFromHome();}};
   }
-};
+  if(dueCard){
+    dueCard.onclick=showRenewalDueFromHome;
+    dueCard.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showRenewalDueFromHome();}};
+  }
+  if(expiredCard){
+    expiredCard.onclick=showExpiredFromHome;
+    expiredCard.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showExpiredFromHome();}};
+  }
+}
+bindDashboardCards();
 
 function render(){
   const __renderStart=performance.now();
@@ -1229,6 +1276,7 @@ $('settings').onsubmit=async e=>{
   if($('newPass').value)settings.pass=$('newPass').value;
   settings.logo=logoData||settings.logo;
   settings.voiceVolume=Math.max(0,Math.min(1,Number($('voiceVolumeAdmin').value||80)/100));
+  settings.birthdayMusic=$('birthdayMusicAdmin') ? $('birthdayMusicAdmin').value==='on' : settings.birthdayMusic!==false;
   try{
     // settings is already unpacked when loaded; do not unpack again here,
     // otherwise a deleted audio value can be restored from the old packed logo.
@@ -1306,7 +1354,8 @@ function buildAllMemberForms(){
   <style>
   @page{size:A4;margin:12mm}body{font-family:Arial,sans-serif;color:#111}.member-form-page{page-break-after:always;min-height:270mm}.member-form-page:last-child{page-break-after:auto}
   .form-header{display:flex;justify-content:space-between;align-items:flex-start}.form-header h1{margin:0 0 6px;font-size:22px}.print-table{width:100%;border-collapse:collapse;margin-top:18px}.print-table th,.print-table td{border:1px solid #777;padding:9px;text-align:left;vertical-align:top}.print-table th{width:18%;background:#f1f1f1}.signature-row{display:flex;justify-content:space-between;margin-top:70px}.footer-note{margin-top:45px;text-align:center;font-size:12px;color:#666}
-  </style></head><body>${pages}</body></html>`;
+  </style></head><body>${pages}
+</body></html>`;
 }
 
 function waitForImagesIn(root,timeout=15000){
@@ -1480,6 +1529,73 @@ async function compressExistingMemberPhotos(){
   finally{if(btn){btn.disabled=false;btn.textContent=old||'🗜️ পুরোনো ছবি 100 KB-এর মধ্যে করুন';}}
 }
 
+
+let birthdayAudioCtx=null, birthdayMusicTimer=null;
+function playBirthdayMusic(){
+  if(settings.birthdayMusic===false)return;
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return;
+    birthdayAudioCtx=birthdayAudioCtx||new AC();
+    if(birthdayAudioCtx.state==='suspended')birthdayAudioCtx.resume();
+    const notes=[
+      [261.63,.00,.28],[261.63,.30,.16],[293.66,.48,.42],[261.63,.92,.42],[349.23,1.36,.42],[329.63,1.80,.70],
+      [261.63,2.60,.28],[261.63,2.90,.16],[293.66,3.08,.42],[261.63,3.52,.42],[392.00,3.96,.42],[349.23,4.40,.70],
+      [261.63,5.20,.28],[261.63,5.50,.16],[523.25,5.68,.42],[440.00,6.12,.42],[349.23,6.56,.42],[329.63,7.00,.42],[293.66,7.44,.70],
+      [466.16,8.25,.28],[466.16,8.55,.16],[440.00,8.73,.42],[349.23,9.17,.42],[392.00,9.61,.42],[349.23,10.05,.80]
+    ];
+    const now=birthdayAudioCtx.currentTime+.05;
+    notes.forEach(([freq,start,dur])=>{
+      const o=birthdayAudioCtx.createOscillator(), g=birthdayAudioCtx.createGain();
+      o.type='triangle'; o.frequency.setValueAtTime(freq,now+start);
+      g.gain.setValueAtTime(.0001,now+start);
+      g.gain.exponentialRampToValueAtTime(.20,now+start+.012);
+      g.gain.exponentialRampToValueAtTime(.0001,now+start+dur);
+      o.connect(g); g.connect(birthdayAudioCtx.destination);
+      o.start(now+start); o.stop(now+start+dur+.04);
+    });
+    birthdayMusicTimer=setTimeout(()=>{},11500);
+  }catch(e){console.warn('Birthday music unavailable:',e.message)}
+}
+function stopBirthdayMusic(){
+  if(birthdayMusicTimer)clearTimeout(birthdayMusicTimer);
+  birthdayMusicTimer=null;
+}
+function showBirthdayCelebration(){
+  const list=members.filter(bd);
+  if(!list.length){alert('আজ কোনো সদস্যের জন্মদিন নেই।');return;}
+  playBirthdayMusic();
+  const modal=$('birthdayModal'), nameEl=$('birthdayName'), msgEl=$('birthdayMessage'), conf=$('birthdayConfetti');
+  let idx=0;
+  function showOne(){
+    const m=list[idx];
+    nameEl.textContent=m.name||'প্রিয় সদস্য';
+    msgEl.innerHTML='🎂 তোমার জন্মদিনে রইল আন্তরিক শুভেচ্ছা ও ভালোবাসা।<br>তোমার জীবন সুখ, সুস্বাস্থ্য, শান্তি ও সাফল্যে ভরে উঠুক।<br><b>শুভ জন্মদিন! 🎉</b>';
+  }
+  conf.innerHTML='';
+  for(let i=0;i<70;i++){const x=document.createElement('i');x.style.left=(Math.random()*100)+'%';x.style.top=(-20-Math.random()*180)+'px';x.style.animationDelay=(Math.random()*2.5)+'s';x.style.animationDuration=(2+Math.random()*2)+'s';x.style.transform='rotate('+(Math.random()*360)+'deg)';conf.appendChild(x);}
+  showOne(); modal.classList.add('show');
+  if(window.birthdayTimer)clearInterval(window.birthdayTimer);
+  if(list.length>1){window.birthdayTimer=setInterval(()=>{idx=(idx+1)%list.length;showOne();},3500);}
+}
+function closeBirthdayCelebration(){if(window.birthdayTimer)clearInterval(window.birthdayTimer);stopBirthdayMusic();$('birthdayModal').classList.remove('show');}
+// Birthday areas only open the birthday celebration.
+document.addEventListener('click',function(e){
+  if(e.target.id==='birthdayClose' || e.target.id==='birthdayModal'){closeBirthdayCelebration();return;}
+  if(e.target.closest && e.target.closest('#birthdayModal')) return;
+  const el=e.target.closest && (e.target.closest('#birthdayTodayCard')||e.target.closest('#birthdayTop')||e.target.closest('#birthList')||e.target.closest('#home h2'));
+  if(!el)return;
+  if(/birthday|জন্মদিন/i.test(el.textContent||'')){e.preventDefault();showBirthdayCelebration();}
+});
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){closeBirthdayCelebration();return;}
+  if(e.key!=='Enter'&&e.key!==' ')return;
+  const el=e.target.closest && (e.target.closest('#birthdayTodayCard')||e.target.closest('#birthdayTop')||e.target.closest('#birthList')||e.target.closest('#home h2'));
+  if(!el)return;
+  if(/birthday|জন্মদিন/i.test(el.textContent||'')){e.preventDefault();showBirthdayCelebration();}
+});
+
+
 $('downloadAllForms').onclick=downloadAllMemberForms;
 $('printAllForms').onclick=printAllMemberForms;
 $('compressOldPhotos').onclick=compressExistingMemberPhotos;
@@ -1490,4 +1606,6 @@ loadFastCache();
 apply();
 initVoiceControls();
 loadData();
-</script></body></html>
+</script>
+
+</body></html>
