@@ -54,7 +54,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 </style>
 </head><body>
 <header><div class="head"><img id="siteLogo" class="logo" alt="logo"><div class="brand"><h1 id="siteName">North Nilachal Sporting Center</h1><small id="regNo">Registration No.: S/1L/81249</small><small style="display:block;opacity:.8">Member Management System</small></div></div>
-<nav><button class="active" data-tab="home">🏠 Home</button><button data-tab="members">👥 Members</button><button data-tab="apply">📝 Membership Form</button><button id="adminBtn">🔒 Admin</button></nav></header>
+<nav><button class="active" data-tab="home">🏠 Home</button><button data-tab="members">👥 Members</button><button data-tab="apply">📝 Membership Form</button><button data-tab="pricing">💳 Membership & Pricing</button><button id="adminBtn">🔒 Admin</button></nav></header>
 <main>
 <div class="notice-wrap">
   <div class="notice-bar">
@@ -69,6 +69,52 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 <section id="home" class="section active"><div id="loadingNotice" class="card hint" style="display:none;text-align:center;font-weight:700">⏳ Member details are loading…</div><div id="birthdayTop"></div><div class="grid"><div class="card stat" id="totalMembersCard" role="button" tabindex="0" title="View all members" style="cursor:pointer">Total Members<b id="total">0</b></div><div class="card stat" id="birthdayTodayCard" role="button" tabindex="0" title="View today’s birthdays" style="cursor:pointer">Birthdays Today<b id="birthdayTodayCount">0</b></div><div class="card stat" id="renewalDueCard" role="button" tabindex="0" title="View renewal due members" style="cursor:pointer">Renewal Due<b id="due">0</b></div><div class="card stat" id="expiredCard" role="button" tabindex="0" title="View expired members" style="cursor:pointer">Expired<b id="expired">0</b></div></div><div class="card upcoming-birthday" id="upcomingBirthdayCard" role="button" tabindex="0" title="Click to view next member birthday"><h2>🎂 Upcoming Birthday</h2><div id="upcomingBirthdayInfo" style="display:none;margin-top:7px"><b class="next-bday-name" id="nextBdayName"></b><div class="next-bday-meta" id="nextBdayMeta"></div></div></div></section>
 <section id="members" class="section"><div class="toolbar"><input id="search" class="input" placeholder="Name/Mobile দিয়ে খুঁজুন"><button id="addBtn" class="btn primary" style="display:none">+ Add Member</button></div><div class="card tablewrap"><table><thead><tr><th>Photo</th><th>Member ID</th><th id="memberTypeHead" style="display:none">Member Type</th><th>Name</th><th>Gender</th><th>Blood Group</th><th id="dobHead">Date of Birth</th><th id="feeHead" style="display:none">Fee</th><th>Payment Date</th><th>Validity</th><th>Aadhaar (Last 4)</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div></section>
 
+<section id="pricing" class="section">
+  <div class="card">
+    <h2>💳 Membership Plans & Pricing</h2>
+    <p style="line-height:1.7;color:#52606d">
+      North Nilachal Sporting Center-এর সদস্যপদ গ্রহণ ও নবীকরণের জন্য নিচের Membership Plans উপলব্ধ।
+      Membership fee অনুযায়ী সংশ্লিষ্ট সময়ের membership validity প্রদান করা হয়।
+    </p>
+
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-top:15px">
+      <div class="card" style="margin:0;border:1px solid #e5ebf2">
+        <div class="stat">1 Month</div><b style="font-size:26px">₹100</b>
+        <p style="color:#667;margin-bottom:0">Membership validity: 1 month</p>
+      </div>
+      <div class="card" style="margin:0;border:1px solid #e5ebf2">
+        <div class="stat">2 Months</div><b style="font-size:26px">₹200</b>
+        <p style="color:#667;margin-bottom:0">Membership validity: 2 months</p>
+      </div>
+      <div class="card" style="margin:0;border:1px solid #e5ebf2">
+        <div class="stat">3 Months</div><b style="font-size:26px">₹300</b>
+        <p style="color:#667;margin-bottom:0">Membership validity: 3 months</p>
+      </div>
+      <div class="card" style="margin:0;border:1px solid #e5ebf2">
+        <div class="stat">4 Months</div><b style="font-size:26px">₹400</b>
+        <p style="color:#667;margin-bottom:0">Membership validity: 4 months</p>
+      </div>
+      <div class="card" style="margin:0;border:1px solid #e5ebf2">
+        <div class="stat">5 Months</div><b style="font-size:26px">₹500</b>
+        <p style="color:#667;margin-bottom:0">Membership validity: 5 months</p>
+      </div>
+      <div class="card" style="margin:0;border:1px solid #e5ebf2">
+        <div class="stat">12 Months (1 Year)</div><b style="font-size:26px">₹1000</b>
+        <p style="color:#667;margin-bottom:0">Membership validity: 12 months</p>
+      </div>
+    </div>
+
+    <div class="hint" style="margin-top:15px">
+      <b>Membership Service:</b> New membership application and existing membership renewal.
+      Payment-এর পরে প্রযোজ্য তথ্য যাচাই করে membership record update করা হয়।
+    </div>
+
+    <div class="actions" style="justify-content:flex-start">
+      <button type="button" class="btn green" onclick="openTab('apply')">📝 Apply for Membership</button>
+      <button type="button" class="btn primary" onclick="openTab('members')">👥 View Members / Renew</button>
+    </div>
+  </div>
+</section>
 <section id="apply" class="section">
   <div class="card">
     <h2>📝 Membership Application</h2>
@@ -720,6 +766,7 @@ function openTab(id){
   document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
   if(id==='home')document.querySelector('[data-tab=home]').classList.add('active');
   if(id==='members'){document.querySelector('[data-tab=members]').classList.add('active');rows()}
+  if(id==='pricing')document.querySelector('[data-tab=pricing]').classList.add('active');
   if(id==='apply'){
       document.querySelector('[data-tab=apply]').classList.add('active');
       setDefaultPaymentDates();
