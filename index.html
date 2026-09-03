@@ -118,6 +118,18 @@ footer{background:#04271d;color:#bcd0c8;text-align:center;padding:22px 15px;font
 /* Force the typed/pasted English letters to become real CAPITAL letters, not just visual CSS. */
 #membershipForm input[type="text"],#membershipForm textarea{font-variant-caps:normal;}
 .member-detail-pop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10050;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;overflow-y:auto}.member-detail-inner{position:relative;background:#fff;border-radius:20px;padding:26px 20px 22px;width:min(380px,calc(100vw - 32px));max-width:380px;box-sizing:border-box;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.32);overflow:hidden}.member-detail-inner>.member-detail-close{position:absolute;right:10px;top:10px;z-index:2;border:0;background:#eee;border-radius:50%;width:34px;height:34px;font-size:24px;line-height:34px;padding:0}.member-detail-inner img{display:block;width:130px;height:165px;object-fit:cover;border-radius:12px;margin:4px auto 12px}.member-detail-inner h3{display:block;color:#0b5a41;margin:8px 0 6px;line-height:1.35;overflow-wrap:anywhere;word-break:break-word}.member-detail-inner p{line-height:1.7;color:#334d43;overflow-wrap:anywhere;word-break:break-word;margin:8px 0}.donor-badge{display:inline-block;margin-left:6px;padding:3px 7px;border-radius:9px;background:#e8f4ef;color:#0b5a41;font-size:10px;font-weight:800}.detail-donor-badge{display:block!important;width:fit-content!important;max-width:calc(100% - 20px)!important;box-sizing:border-box!important;margin:4px auto 10px!important;padding:6px 12px!important;border-radius:10px!important;background:#e8f4ef!important;color:#0b5a41!important;font-size:12px!important;font-weight:800!important;white-space:normal!important;text-align:center!important;overflow-wrap:anywhere!important;word-break:break-word!important;position:static!important;float:none!important;transform:none!important}
+
+/* Admin member editor */
+.admin-edit-box{position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:10100;display:flex;align-items:center;justify-content:center;padding:14px;overflow:auto}
+.admin-edit-inner{position:relative;background:#fff;width:min(620px,100%);max-height:92vh;overflow:auto;border-radius:22px;padding:24px 18px 20px;box-shadow:0 25px 70px #0006}
+.admin-edit-inner h2{color:#0b5a41;margin:0 38px 16px 0;font-size:24px}
+.admin-edit-close{position:absolute;right:12px;top:10px;border:0;background:#eee;border-radius:50%;width:38px;height:38px;font-size:25px;cursor:pointer}
+.admin-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.admin-edit-grid .full{grid-column:1/-1}
+.admin-edit-grid label{font-weight:700;color:#244d3e;display:flex;flex-direction:column;gap:6px}
+.admin-edit-grid input,.admin-edit-grid textarea{width:100%;border:1px solid #ccd9d3;border-radius:11px;padding:11px;background:#f9fbfa}
+.admin-edit-grid textarea{min-height:90px;resize:vertical}.admin-edit-photo{text-align:center;margin-bottom:15px}.admin-edit-photo img{width:100px;height:125px;object-fit:cover;border-radius:12px;border:2px solid #e1ebe6}.admin-edit-actions{display:flex;gap:10px;margin-top:16px}.admin-edit-actions button{flex:1}
+.admin-edit-donor{display:flex!important;flex-direction:row!important;align-items:center;gap:8px!important;background:#f4f8f6;padding:11px;border-radius:11px}.admin-validity-preview{background:#eef8f3;padding:11px;border-radius:11px}.validity-line{font-size:12px;color:#0b7b5a!important}
+@media(max-width:600px){.admin-edit-grid{grid-template-columns:1fr}.admin-edit-grid .full{grid-column:auto}.admin-edit-inner{padding:22px 14px 18px}.admin-edit-actions{flex-direction:column}}
 </style>
 <style id="admin-member-list-v33">
 .admin-member-list{display:flex;flex-direction:column;gap:8px;max-height:52vh;overflow-y:auto;padding:4px 3px 8px}
@@ -127,7 +139,7 @@ footer{background:#04271d;color:#bcd0c8;text-align:center;padding:22px 15px;font
 .admin-member-row .info{min-width:0;flex:1}
 .admin-member-row .name{font-weight:800;color:#0b5a41;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .admin-member-row .sub{font-size:12px;color:#60756d;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.admin-member-row .view{border:0;background:#e8f4ef;color:#0b5a41;border-radius:10px;padding:8px 11px;font-weight:700;cursor:pointer}
+.admin-member-row .view{border:0;background:#e8f4ef;color:#0b5a41;border-radius:10px;padding:8px 11px;font-weight:700;cursor:pointer}.admin-member-row .edit-member-btn{background:#fff3c4;color:#725500;margin-left:4px}
 .admin-member-list::-webkit-scrollbar{width:6px}.admin-member-list::-webkit-scrollbar-thumb{background:#b7d8ca;border-radius:20px}
 </style>
 
@@ -143,7 +155,7 @@ section{max-width:1240px;padding:78px 20px}.title{margin-bottom:38px}.title h2{f
 .cards{gap:22px}.card{border:1px solid #e1ebe6;border-radius:20px;padding:28px;box-shadow:0 12px 35px #17352b0d;transition:.25s}.card:hover{transform:translateY(-5px);box-shadow:0 18px 40px #17352b18}.icon{width:54px;height:54px;display:grid;place-items:center;border-radius:15px;background:#e9f5f0;font-size:27px}.card h3{font-size:20px}
 .events{gap:22px}.event{border-radius:20px;padding:30px;background:linear-gradient(135deg,var(--green),var(--green2));box-shadow:0 12px 30px #064e3b20}.event span{font-size:12px;letter-spacing:1px}.notice{border-left:0;border-top:4px solid var(--gold);border-radius:15px;padding:20px 22px}
 .members-modal,.apply-modal,.modal{backdrop-filter:blur(5px);background:#021f18b8}.members-modal-box,.apply-modal .apply-box,.panel{border:1px solid #e0ebe6;box-shadow:0 25px 70px #0004;border-radius:24px}.members-modal-box{padding:32px}.member-count-badge{background:#e5f5ee;border:1px solid #cce8dc}.member-search{border-radius:13px;padding:13px 15px;box-shadow:0 4px 12px #00000008}.member-card{border-radius:20px;padding:20px;transition:.2s;box-shadow:0 8px 25px #0000000d}.member-card:hover{transform:translateY(-4px);box-shadow:0 15px 35px #00000016}.member-photo{width:105px;height:105px}.member-id{background:#edf7f3}
-.apply-box{background:#fff}.field input,.field textarea{border-radius:11px;padding:12px;border-color:#d4e2dc}.field input:focus,.field textarea:focus{outline:none;border-color:#0b7b5a;box-shadow:0 0 0 3px #0b7b5a18}
+.apply-box{background:#fff}.field input,.field textarea,.field select{border-radius:11px;padding:12px;border:1px solid #d4e2dc;background:#fff}.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:#0b7b5a;box-shadow:0 0 0 3px #0b7b5a18}
 .contact{background:linear-gradient(135deg,#032d23,#064e3b)}.contact .card{background:#fff}.contact .card p{color:#17352b!important}.contact-inner{max-width:1240px}.contact .title h2{font-size:34px}
 footer{background:#021f18;padding:28px 15px}
 @media(max-width:760px){.nav{padding:9px 12px}.brand h1{font-size:14px}.brand small{font-size:9px}.hero{min-height:610px;padding:70px 15px}.hero h2{font-size:42px}.hero p{font-size:16px}section{padding:58px 15px}.title h2,.contact .title h2{font-size:29px}.members-modal-box{padding:22px 14px}.btn{padding:11px 18px}}
@@ -292,6 +304,7 @@ footer{background:#021f18;padding:28px 15px}
       <div class="field"><label>পিতার নাম</label><input id="aFather" oninput="uppercaseNow(this)" onpaste="setTimeout(() => uppercaseNow(this), 0)"></div>
       <div class="field"><label>জন্ম তারিখ (Date of Birth) *</label><input id="aDob" type="date" required></div>
       <div class="field"><label>মোবাইল নম্বর *</label><input id="aMobile" inputmode="tel" type="tel" required></div>
+      <div class="field full"><label>মেম্বারশিপ ফি * <small>(জুন ২০২৬ থেকে; নির্দিষ্ট তারিখ নয়, শুধু মাস অনুযায়ী গণনা)</small></label><select id="aMembershipFee" required><option value="">ফি নির্বাচন করুন</option><option value="100">₹100 — ১ মাস</option><option value="200">₹200 — ২ মাস</option><option value="300">₹300 — ৩ মাস</option><option value="400">₹400 — ৪ মাস</option><option value="500">₹500 — ৫ মাস</option><option value="1000">₹1000 — ১২ মাস (১ বছর)</option></select><small class="photo-note">সদস্যপদের কার্যকারিতা ১ জুন ২০২৬ থেকে গণনা হবে। প্রদত্ত ফি অনুযায়ী বৈধতার মেয়াদ নির্ধারিত হবে।</small></div>
       <div class="field full"><label>সম্পূর্ণ Aadhaar নম্বর *</label><input id="aAadhaarFull" inputmode="numeric" type="text" maxlength="12" minlength="12" pattern="[0-9]{12}" placeholder="১২ সংখ্যার Aadhaar নম্বর" required></div>
       <div class="field full"><label>ঠিকানা *</label><textarea id="aAddress" required oninput="uppercaseNow(this)" onpaste="setTimeout(() => uppercaseNow(this), 0)"></textarea></div>
       <div class="field full"><label>পাসপোর্ট সাইজের ছবি *</label><input id="aPhoto" type="file" accept="image/jpeg,image/png,image/webp" required onchange="validatePassportPhoto(this)"><small class="photo-note">শুধু পাসপোর্ট সাইজের (প্রায় 35×45 অনুপাতের) ছবি গ্রহণ করা হবে। ছবি সর্বোচ্চ ১০০ KB-এর মধ্যে তৈরি হবে।</small><div id="photoMsg" class="msg"></div></div>
@@ -498,7 +511,7 @@ async function loadPublicMembers(){
   const list=document.getElementById("memberList");
   if(!list)return;
   list.innerHTML='<div class="member-empty">সদস্যদের নাম লোড হচ্ছে...</div>';
-  const {data,error}=await db.from("members").select("id,member_id,name,father_name,mobile,address,photo_url,aadhaar_last4,donor").order("name",{ascending:true});
+  const {data,error}=await db.from("members").select("id,member_id,name,father_name,mobile,address,photo_url,aadhaar_last4,donor,membership_fee,paid_months,validity_start,validity_end").order("name",{ascending:true});
   if(error){list.innerHTML='<div class="member-empty">সদস্য তালিকা লোড করা যায়নি।</div>';return;}
   publicMembersCache=data||[];
   renderPublicMembers(publicMembersCache);
@@ -511,13 +524,45 @@ async function loadPublicMembers(){
     });
   }
 }
+function formatDateBn(value){
+  if(!value)return "";
+  const parts=String(value).slice(0,10).split("-");
+  if(parts.length!==3)return String(value);
+  return `${parts[2]}-${parts[1]}-${parts[0]}`;
+}
+function membershipMonthsFromFee(fee){
+  const n=Number(fee)||0;
+  return ({100:1,200:2,300:3,400:4,500:5,1000:12})[n]||0;
+}
+function calculateMembershipValidity(fee,start="2026-06-01"){
+  const months=membershipMonthsFromFee(fee);
+  if(!months)return {months:0,start:start||"",end:""};
+  const p=String(start||"2026-06-01").slice(0,10).split("-").map(Number);
+  if(p.length!==3 || p.some(Number.isNaN))return {months,start:"2026-06-01",end:""};
+  const y=p[0],m=p[1],d=p[2];
+  const end=new Date(y,m-1+months,d);
+  end.setDate(0);
+  const endIso=`${end.getFullYear()}-${String(end.getMonth()+1).padStart(2,"0")}-${String(end.getDate()).padStart(2,"0")}`;
+  return {months,start:`${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`,end:endIso};
+}
+function membershipMonthText(value){
+  if(!value)return ""; const p=String(value).slice(0,10).split("-").map(Number);
+  if(p.length!==3 || p.some(Number.isNaN))return String(value);
+  const months=["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+  return `${months[p[1]-1]} ${p[0]}`;
+}
+function membershipValidityText(m){
+  if(!m?.validity_start || !m?.validity_end)return "";
+  return ` • বৈধতা: ${membershipMonthText(m.validity_start)} থেকে ${membershipMonthText(m.validity_end)}`;
+}
+
 function renderPublicMembers(items){
   const list=document.getElementById("memberList");
   if(!list)return;
   if(!items.length){list.innerHTML='<div class="member-empty">কোনো সদস্য পাওয়া যায়নি।</div>';return;}
   list.innerHTML=items.map((m,i)=>{
     const photo=m.photo_url?esc(m.photo_url):"";
-    const meta=[m.member_id?"ID: "+displayMemberId(m.member_id,m.donor):"",m.mobile||""].filter(Boolean).join(" • ");
+    const meta=[m.member_id?"ID: "+displayMemberId(m.member_id,m.donor):"",m.mobile||"",m.membership_fee?"ফি ₹"+Number(m.membership_fee):"",membershipValidityText(m)].filter(Boolean).join(" • ");
     return `<div class="member-row" tabindex="0" role="button" onclick="showMemberDetails('${esc(String(m.id))}')">
       ${photo?`<img class="member-photo-thumb" src="${photo}" alt="${esc(m.name||"Member")}" loading="lazy" decoding="async">`:`<div class="member-photo-placeholder">👤</div>`}
       <div class="member-main"><div class="member-name">${esc(m.name||"নাম নেই")}</div><div class="member-meta">${esc(meta||"সদস্য")}</div></div>
@@ -528,7 +573,7 @@ function renderPublicMembers(items){
 function showMemberDetails(id){
   const m=publicMembersCache.find(x=>String(x.id)===String(id));
   if(!m)return;
-  const lines=[m.father_name?`পিতার নাম: ${esc(m.father_name)}`:"",m.mobile?`মোবাইল: ${esc(m.mobile)}`:"",m.address?`ঠিকানা: ${esc(m.address)}`:"",m.aadhaar_last4?`Aadhaar: XXXX-XXXX-${esc(m.aadhaar_last4)}`:""].filter(Boolean).join("<br>");
+  const lines=[m.father_name?`পিতার নাম: ${esc(m.father_name)}`:"",m.mobile?`মোবাইল: ${esc(m.mobile)}`:"",m.address?`ঠিকানা: ${esc(m.address)}`:"",m.membership_fee?`মেম্বারশিপ ফি: ₹${esc(m.membership_fee)} (${esc(m.paid_months||membershipMonthsFromFee(m.membership_fee))} মাস)`:"",m.validity_start&&m.validity_end?`সদস্যপদের বৈধতা: ${esc(membershipMonthText(m.validity_start))} থেকে ${esc(membershipMonthText(m.validity_end))}`:"",m.aadhaar_last4?`Aadhaar: XXXX-XXXX-${esc(m.aadhaar_last4)}`:""].filter(Boolean).join("<br>");
   const box=document.createElement("div");
   box.className="member-detail-pop";
   box.innerHTML=`<div class="member-detail-inner"><button class="member-detail-close" type="button" onclick="this.closest('.member-detail-pop').remove()">×</button>${m.photo_url?`<img src="${esc(m.photo_url)}" alt="${esc(m.name||"Member")}">`:""}<h3>${esc(m.name||"")}</h3>${m.donor?`<div class="detail-donor-badge">DONOR MEMBER</div>`:""}<p><strong>Member ID:</strong> ${esc(displayMemberId(m.member_id,m.donor))}<br>${lines}</p></div>`;
@@ -596,12 +641,15 @@ async function submitMembershipApplication(e){
   const photo=photoInput?.files?.[0];
   const dob=document.getElementById("aDob").value;
   const mobile=document.getElementById("aMobile").value.trim();
+  const fee=Number(document.getElementById("aMembershipFee")?.value||0);
+  const feeMonths=membershipMonthsFromFee(fee);
   const mobileDigits=mobile.replace(/\D/g,"");
   const aadFull=document.getElementById("aAadhaarFull").value.trim();
   uppercaseNow(aName); uppercaseNow(aFather); uppercaseNow(aAddress);
   if(!aName.value.trim()){msg("applyMsg","আপনার নাম অবশ্যই দিতে হবে।");return}
   if(!dob){msg("applyMsg","জন্ম তারিখ অবশ্যই দিতে হবে।");return}
   if(mobileDigits.length<10 || mobileDigits.length>15){msg("applyMsg","সঠিক মোবাইল নম্বর দিন।");return}
+  if(!feeMonths){msg("applyMsg","সঠিক মেম্বারশিপ ফি নির্বাচন করুন।");return}
   if(!/^\d{12}$/.test(aadFull)){msg("applyMsg","সঠিক ১২ সংখ্যার Aadhaar নম্বর দিতে হবে।");return}
   if(!aAddress.value.trim()){msg("applyMsg","ঠিকানা অবশ্যই দিতে হবে।");return}
   if(!photo){msg("applyMsg","পাসপোর্ট সাইজের ছবি অবশ্যই দিতে হবে।");return}
@@ -622,6 +670,7 @@ async function submitMembershipApplication(e){
     name:aName.value.trim(), father_name:aFather.value.trim()||null, dob:dob,
     mobile:mobile, phone:mobile, aadhaar_full:aadFull,
     aadhaar_last4:aadFull.slice(-4), address:aAddress.value.trim(),
+    membership_fee:fee, paid_months:feeMonths, validity_start:"2026-06-01", validity_end:calculateMembershipValidity(fee,"2026-06-01").end,
     photo_url:photoUrl, status:"pending"
   };
   let {error}=await db.from("membership_applications").insert(applicationPayload);
@@ -690,11 +739,11 @@ document.getElementById("memberForm")?.addEventListener("submit",addMember);
 async function loadApplications(){
   // Only request columns that belong to membership_applications.
   // Full Aadhaar here is visible only after the admin has authenticated.
-  const cols="id,name,father_name,dob,mobile,phone,aadhaar_full,aadhaar_last4,address,photo_url,status,created_at";
+  const cols="id,name,father_name,dob,mobile,phone,aadhaar_full,aadhaar_last4,address,membership_fee,paid_months,validity_start,validity_end,photo_url,status,created_at";
   let {data,error}=await db.from("membership_applications").select(cols).order("created_at",{ascending:false});
   if(error){adminApplications.innerHTML='<div class="admin-note">আবেদন লোড করা যায়নি: '+esc(error.message)+'</div>';return}
   const dash=document.getElementById("dashMsg"); if(dash) dash.textContent="";
-  adminApplications.innerHTML=(data||[]).map(a=>`<div class="notice"><strong>${esc(a.name)}</strong> • <span class="status-${esc(a.status)}">${esc(a.status||"pending")}</span><br>পিতার নাম: ${esc(a.father_name||"—")}<br>জন্ম তারিখ: ${esc(a.dob||"—")}<br>Mobile: ${esc(a.mobile||a.phone||"—")} • Aadhaar: ${a.aadhaar_full?esc(a.aadhaar_full):"—"}<br>ঠিকানা: ${esc(a.address||"—")} ${a.photo_url?`<br><img src="${esc(a.photo_url)}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-top:8px">`:""}<br>${a.status==="pending"?`<button onclick="approveApplication('${a.id}')" class="btn">Approve</button> `:""}<button onclick="deleteApplication('${a.id}')" class="btn">Delete</button></div>`).join("")||'<div class="admin-note">এখনও কোনো আবেদন আসেনি।</div>';
+  adminApplications.innerHTML=(data||[]).map(a=>`<div class="notice"><strong>${esc(a.name)}</strong> • <span class="status-${esc(a.status)}">${esc(a.status||"pending")}</span><br>পিতার নাম: ${esc(a.father_name||"—")}<br>জন্ম তারিখ: ${esc(a.dob||"—")}<br>Mobile: ${esc(a.mobile||a.phone||"—")} • Aadhaar: ${a.aadhaar_full?esc(a.aadhaar_full):"—"}<br>মেম্বারশিপ ফি: ₹${esc(a.membership_fee||"—")} • মেয়াদ: ${esc(a.paid_months||membershipMonthsFromFee(a.membership_fee)||"—")} মাস<br>বৈধতা: ${a.validity_start&&a.validity_end?esc(formatDateBn(a.validity_start))+" থেকে "+esc(formatDateBn(a.validity_end)):"—"}<br>ঠিকানা: ${esc(a.address||"—")} ${a.photo_url?`<br><img src="${esc(a.photo_url)}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-top:8px">`:""}<br>${a.status==="pending"?`<button onclick="approveApplication('${a.id}')" class="btn">Approve</button> `:""}<button onclick="deleteApplication('${a.id}')" class="btn">Delete</button></div>`).join("")||'<div class="admin-note">এখনও কোনো আবেদন আসেনি।</div>';
 }
 async function getNextMemberId(){
   // বাধ্যতামূলক Member ID format: NNSC0626001, NNSC0626002, NNSC0626003 ...
@@ -714,7 +763,9 @@ async function approveApplication(id){
   if(error||!a){msg("dashMsg",error?.message||"আবেদন পাওয়া যায়নি।");return}
   let memberId;
   try{ memberId=await getNextMemberId(); }catch(err){ msg("dashMsg","Member ID তৈরি করা যায়নি: "+err.message); return; }
-  const ins=await db.from("members").insert({member_id:memberId,name:a.name,father_name:a.father_name,dob:a.dob||null,aadhaar_last4:(a.aadhaar_full?String(a.aadhaar_full).slice(-4):null),mobile:a.mobile,address:a.address,photo_url:a.photo_url}).select("id").single();
+  const fee=Number(a.membership_fee)||0;
+  const validity=calculateMembershipValidity(fee,"2026-06-01");
+  const ins=await db.from("members").insert({member_id:memberId,name:a.name,father_name:a.father_name,dob:a.dob||null,aadhaar_last4:(a.aadhaar_full?String(a.aadhaar_full).slice(-4):null),mobile:a.mobile,address:a.address,membership_fee:fee||null,paid_months:validity.months||null,validity_start:validity.months?validity.start:null,validity_end:validity.months?validity.end:null,photo_url:a.photo_url}).select("id").single();
   if(ins.error){msg("dashMsg",ins.error.message);return}
   if(a.aadhaar_full){
     const priv=await db.from("member_private").insert({member_id:ins.data.id,aadhaar_full:a.aadhaar_full});
@@ -757,7 +808,7 @@ function baseMemberId(memberId){
   return shown.replace(/^NNSCD/i,"NNSC");
 }
 async function loadMembers(){
-  const cols="id,member_id,name,father_name,dob,mobile,address,photo_url,aadhaar_last4,donor";
+  const cols="id,member_id,name,father_name,dob,mobile,address,photo_url,aadhaar_last4,donor,membership_fee,paid_months,validity_start,validity_end";
   let {data,error}=await db.from("members").select(cols).order("name",{ascending:true});
   if(error){adminMembers.innerHTML='<div class="admin-note">Members table লোড করা যায়নি: '+esc(error.message)+'</div>';return}
   let {data:priv, error:privError}=await db.from("member_private").select("member_id,aadhaar_full");
@@ -769,24 +820,109 @@ async function loadMembers(){
     <div class="admin-member-list">${members.map((m,i)=>`
       <div class="admin-member-row">
         ${m.photo_url?`<img class="admin-member-thumb" src="${esc(m.photo_url)}" alt="${esc(m.name||"Member")}" loading="lazy" decoding="async">`:`<div class="admin-member-thumb admin-member-placeholder">👤</div>`}
-        <div class="info"><div class="name">${esc(m.name||"নাম নেই")}</div><div class="sub">${esc(displayMemberId(m.member_id,m.donor))} ${m.donor?"• DONOR MEMBER":""} ${m.mobile?"• "+esc(m.mobile):""}</div></div>
-        <button type="button" class="view" onclick="showAdminMemberDetails('${esc(String(m.id))}')">দেখুন</button>
+        <div class="info"><div class="name">${esc(m.name||"নাম নেই")}</div><div class="sub">${esc(displayMemberId(m.member_id,m.donor))} ${m.donor?"• DONOR MEMBER":""} ${m.mobile?"• "+esc(m.mobile):""} ${m.membership_fee?"• ₹"+Number(m.membership_fee):""}</div><div class="sub validity-line">${m.validity_start&&m.validity_end?"বৈধ: "+esc(formatDateBn(m.validity_start))+" → "+esc(formatDateBn(m.validity_end)):"ভ্যালিডিটি সেট করা হয়নি"}</div></div>
+        <button type="button" class="view" onclick="showAdminMemberDetails('${esc(String(m.id))}')">দেখুন</button><button type="button" class="view edit-member-btn" onclick="event.stopPropagation();openEditMember('${esc(String(m.id))}')">সম্পাদনা</button>
       </div>`).join("")}</div>` : '<div class="member-empty">এখনও কোনো সদস্য যোগ করা হয়নি।</div>';
 }
 function showAdminMemberDetails(id){
   const m=publicMembersCache.find(x=>String(x.id)===String(id));
   const rowId=String(id);
-  if(m){
-    const fullAadhaar = document.getElementById("adminMembers") ? "" : "";
-    const box=document.createElement("div");
-    box.className="member-detail-pop";
-    const lines=[m.father_name?`পিতার নাম: ${esc(m.father_name)}`:"",m.dob?`জন্ম তারিখ: ${esc(m.dob)}`:"",m.mobile?`মোবাইল: ${esc(m.mobile)}`:"",m.address?`ঠিকানা: ${esc(m.address)}`:"",m.aadhaar_last4?`Aadhaar: XXXX-XXXX-${esc(m.aadhaar_last4)}`:""].filter(Boolean).join("<br>");
-    box.innerHTML=`<div class="member-detail-inner"><button class="member-detail-close" type="button" onclick="this.closest('.member-detail-pop').remove()">×</button>${m.photo_url?`<img src="${esc(m.photo_url)}" alt="Member" loading="lazy">`:""}<h3>${esc(m.name||"")}</h3>${m.donor?`<div class="detail-donor-badge">DONOR MEMBER</div>`:""}<p>${lines}</p><button type="button" class="btn" onclick="toggleDonorMember('${esc(rowId)}',${m.donor?"false":"true"});this.closest('.member-detail-pop').remove()">${m.donor?"Remove Donor Status":"Make Donor Member"}</button> <button type="button" class="btn" onclick="delMember('${esc(rowId)}');this.closest('.member-detail-pop').remove()">Delete</button></div>`;
-    document.body.appendChild(box);
-    box.onclick=e=>{if(e.target===box)box.remove()};
-    return;
-  }
-  alert("সদস্যের তথ্য পাওয়া যায়নি।");
+  if(!m){alert("সদস্যের তথ্য পাওয়া যায়নি।");return;}
+  const lines=[m.father_name?`পিতার নাম: ${esc(m.father_name)}`:"",m.dob?`জন্ম তারিখ: ${esc(m.dob)}`:"",m.mobile?`মোবাইল: ${esc(m.mobile)}`:"",m.address?`ঠিকানা: ${esc(m.address)}`:"",m.membership_fee?`মেম্বারশিপ ফি: ₹${esc(m.membership_fee)} (${esc(m.paid_months||membershipMonthsFromFee(m.membership_fee))} মাস)`:"",m.validity_start&&m.validity_end?`সদস্যপদের বৈধতা: ${esc(membershipMonthText(m.validity_start))} থেকে ${esc(membershipMonthText(m.validity_end))}`:"",m.aadhaar_last4?`Aadhaar: XXXX-XXXX-${esc(m.aadhaar_last4)}`:""].filter(Boolean).join("<br>");
+  const box=document.createElement("div"); box.className="member-detail-pop";
+  box.innerHTML=`<div class="member-detail-inner"><button class="member-detail-close" type="button" onclick="this.closest('.member-detail-pop').remove()">×</button>${m.photo_url?`<img src="${esc(m.photo_url)}" alt="Member" loading="lazy">`:""}<h3>${esc(m.name||"")}</h3>${m.donor?`<div class="detail-donor-badge">DONOR MEMBER</div>`:""}<p><strong>Member ID:</strong> ${esc(displayMemberId(m.member_id,m.donor))}<br>${lines}</p><button type="button" class="btn" onclick="openEditMember('${esc(rowId)}');this.closest('.member-detail-pop').remove()">✏️ সম্পাদনা</button> <button type="button" class="btn" onclick="toggleDonorMember('${esc(rowId)}',${m.donor?"false":"true"});this.closest('.member-detail-pop').remove()">${m.donor?"Remove Donor Status":"Make Donor Member"}</button> <button type="button" class="btn" onclick="delMember('${esc(rowId)}');this.closest('.member-detail-pop').remove()">Delete</button></div>`;
+  document.body.appendChild(box); box.onclick=e=>{if(e.target===box)box.remove()};
+}
+
+async function openEditMember(id){
+  const m=publicMembersCache.find(x=>String(x.id)===String(id));
+  if(!m){alert("সদস্যের তথ্য পাওয়া যায়নি।");return;}
+  // Fetch the full Aadhaar only inside the authenticated Admin session.
+  const {data:priv,error:privError}=await db.from("member_private").select("aadhaar_full").eq("member_id",id).maybeSingle();
+  if(privError){msg("dashMsg","পূর্ণ Aadhaar তথ্য লোড করা যায়নি: "+privError.message);return;}
+  const box=document.createElement("div"); box.className="admin-edit-box";
+  box.innerHTML=`<div class="admin-edit-inner">
+    <button type="button" class="admin-edit-close" onclick="this.closest('.admin-edit-box').remove()">×</button>
+    <h2>✏️ সদস্যের তথ্য সম্পাদনা</h2>
+    <div class="admin-edit-photo">${m.photo_url?`<img src="${esc(m.photo_url)}" alt="Member">`:`<div style="font-size:55px">👤</div>`}</div>
+    <div id="editMemberMsg" class="msg"></div>
+    <form id="editMemberForm" class="admin-edit-grid">
+      <label>Member ID<input id="editMemberId" type="text" value="${esc(baseMemberId(m.member_id))}" required></label>
+      <label>নাম<input id="editMemberName" type="text" value="${esc(m.name||"")}" required></label>
+      <label>পিতার নাম<input id="editMemberFather" type="text" value="${esc(m.father_name||"")}"></label>
+      <label>জন্ম তারিখ<input id="editMemberDob" type="date" value="${esc(m.dob||"")}"></label>
+      <label>মোবাইল<input id="editMemberMobile" type="tel" value="${esc(m.mobile||"")}"></label>
+      <label>সম্পূর্ণ Aadhaar Card Number<input id="editMemberAadhaar" type="text" inputmode="numeric" maxlength="12" minlength="12" pattern="[0-9]{12}" value="${esc(priv?.aadhaar_full||"")}" placeholder="১২ সংখ্যার Aadhaar"></label>
+      <label class="full">ঠিকানা<textarea id="editMemberAddress">${esc(m.address||"")}</textarea></label>
+      <label>মেম্বারশিপ ফি<select id="editMemberFee"><option value="">ফি নির্বাচন করুন</option><option value="100" ${Number(m.membership_fee)===100?"selected":""}>₹100 — ১ মাস</option><option value="200" ${Number(m.membership_fee)===200?"selected":""}>₹200 — ২ মাস</option><option value="300" ${Number(m.membership_fee)===300?"selected":""}>₹300 — ৩ মাস</option><option value="400" ${Number(m.membership_fee)===400?"selected":""}>₹400 — ৪ মাস</option><option value="500" ${Number(m.membership_fee)===500?"selected":""}>₹500 — ৫ মাস</option><option value="1000" ${Number(m.membership_fee)===1000?"selected":""}>₹1000 — ১২ মাস</option></select></label>
+      <label>সদস্যপদ কার্যকর হবে<select id="editMemberValidityStart"><option value="2026-06-01" selected>জুন ২০২৬</option></select></label>
+      <label class="full admin-validity-preview">বৈধতা শেষ হবে <strong id="editMemberValidityEnd">${esc(m.validity_end?`${membershipMonthText(m.validity_start)} থেকে ${membershipMonthText(m.validity_end)}`:"ফি নির্বাচন করলে স্বয়ংক্রিয়ভাবে দেখাবে")}</strong></label>
+      <label class="full admin-edit-donor"><input id="editMemberDonor" type="checkbox" ${m.donor?"checked":""}> Donor Member</label>
+      <label class="full">নতুন ছবি (ঐচ্ছিক)<input id="editMemberPhoto" type="file" accept="image/jpeg,image/png,image/webp"></label>
+      <div class="full admin-edit-actions"><button type="submit" class="btn">💾 Save / Update</button><button type="button" class="btn alt" onclick="this.closest('.admin-edit-box').remove()">Cancel</button></div>
+    </form></div>`;
+  document.body.appendChild(box);
+  box.onclick=e=>{if(e.target===box)box.remove()};
+  const feeSelect=box.querySelector("#editMemberFee");
+  const startInput=box.querySelector("#editMemberValidityStart");
+  const endPreview=box.querySelector("#editMemberValidityEnd");
+  const refreshValidityPreview=()=>{const v=calculateMembershipValidity(Number(feeSelect.value||0),startInput.value||"2026-06-01");endPreview.textContent=v.end?`${membershipMonthText(v.start)} থেকে ${membershipMonthText(v.end)}`:"ফি নির্বাচন করলে স্বয়ংক্রিয়ভাবে দেখাবে"};
+  feeSelect.addEventListener("change",refreshValidityPreview);
+  startInput.addEventListener("change",refreshValidityPreview);
+  refreshValidityPreview();
+  const form=box.querySelector("#editMemberForm");
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const save=form.querySelector('button[type="submit"]'); save.disabled=true; save.textContent="Saving...";
+    const emsg=box.querySelector("#editMemberMsg"); emsg.className="msg"; emsg.textContent="";
+    const memberId=box.querySelector("#editMemberId").value.trim();
+    const name=box.querySelector("#editMemberName").value.trim();
+    const father=box.querySelector("#editMemberFather").value.trim();
+    const dob=box.querySelector("#editMemberDob").value||null;
+    const mobile=box.querySelector("#editMemberMobile").value.trim();
+    const address=box.querySelector("#editMemberAddress").value.trim();
+    const fee=Number(box.querySelector("#editMemberFee").value||0);
+    const validityStart="2026-06-01";
+    const validity=calculateMembershipValidity(fee,validityStart);
+    const aadhaar=box.querySelector("#editMemberAadhaar").value.trim();
+    const donor=box.querySelector("#editMemberDonor").checked;
+    const photoInput=box.querySelector("#editMemberPhoto"); const photo=photoInput.files[0];
+    if(!memberId||!name){emsg.textContent="Member ID এবং নাম দিতে হবে।";emsg.className="msg show err";save.disabled=false;save.textContent="💾 Save / Update";return;}
+    if(!validity.months){emsg.textContent="মেম্বারশিপ ফি নির্বাচন করুন।";emsg.className="msg show err";save.disabled=false;save.textContent="💾 Save / Update";return;}
+    if(aadhaar && !/^\d{12}$/.test(aadhaar)){emsg.textContent="Aadhaar Card Number অবশ্যই ১২ সংখ্যার হতে হবে।";emsg.className="msg show err";save.disabled=false;save.textContent="💾 Save / Update";return;}
+    let newPhotoUrl=null;
+    try{
+      if(photo){
+        const compressed=await compressImageMax100KB(photo,1800);
+        const path=`members/${crypto.randomUUID()}.jpg`;
+        const up=await db.storage.from("member-photos").upload(path,compressed,{upsert:false,contentType:"image/jpeg",cacheControl:"3600"});
+        if(up.error)throw new Error("ছবি আপলোড হয়নি: "+up.error.message);
+        newPhotoUrl=db.storage.from("member-photos").getPublicUrl(path).data.publicUrl;
+      }
+      const payload={member_id:memberId,name,father_name:father||null,dob,mobile:mobile||null,address,donor,membership_fee:fee,paid_months:validity.months,validity_start:validity.start,validity_end:validity.end};
+      if(aadhaar)payload.aadhaar_last4=aadhaar.slice(-4);
+      else payload.aadhaar_last4=null;
+      if(newPhotoUrl)payload.photo_url=newPhotoUrl;
+      const upd=await db.from("members").update(payload).eq("id",id);
+      if(upd.error)throw new Error(upd.error.message);
+      // Keep the full Aadhaar in the private table. Remove it if the field is blank.
+      if(aadhaar){
+        const pu=await db.from("member_private").update({aadhaar_full:aadhaar}).eq("member_id",id).select("member_id").maybeSingle();
+        if(pu.error)throw new Error("Aadhaar update করা যায়নি: "+pu.error.message);
+        if(!pu.data){const pi=await db.from("member_private").insert({member_id:id,aadhaar_full:aadhaar});if(pi.error)throw new Error("Aadhaar save করা যায়নি: "+pi.error.message);}
+      }else{
+        const pd=await db.from("member_private").delete().eq("member_id",id); if(pd.error)throw new Error("Aadhaar মুছতে পারা যায়নি: "+pd.error.message);
+      }
+      if(newPhotoUrl && m.photo_url && m.photo_url!==newPhotoUrl)await deleteStorageFile("member-photos",m.photo_url);
+      emsg.textContent="সদস্যের তথ্য সফলভাবে Update হয়েছে।"; emsg.className="msg show ok";
+      await loadMembers(); await loadPublicMembers(); await updateMemberCount();
+      setTimeout(()=>box.remove(),500);
+    }catch(err){
+      if(newPhotoUrl)await deleteStorageFile("member-photos",newPhotoUrl);
+      emsg.textContent=err.message||"Update করা যায়নি।"; emsg.className="msg show err";
+      save.disabled=false; save.textContent="💾 Save / Update";
+    }
+  });
 }
 
 async function toggleDonorMember(id, makeDonor){
