@@ -2,7 +2,7 @@
 <style>
 #appPaid:disabled{opacity:.75;cursor:not-allowed;background:#f1f1f1;}
 
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#172033}header{background:linear-gradient(135deg,#0d3154,#1976d2);color:#fff;padding:18px;position:sticky;top:0;z-index:5}.head{max-width:1100px;margin:auto;display:flex;align-items:center;gap:14px}.logo{width:64px;height:64px;border-radius:50%;background:#fff;object-fit:cover;border:3px solid #f4b400}.brand h1{margin:0;font-size:23px}.brand small{opacity:.8}nav{max-width:1100px;margin:14px auto 0;display:flex;gap:7px;flex-wrap:wrap}nav button,.btn{border:0;border-radius:9px;padding:10px 13px;font-weight:700;cursor:pointer}nav button{background:#ffffff1b;color:#fff}nav button.active,nav button:hover{background:#fff;color:#123b66}.btn.primary{background:#1976d2;color:#fff}.btn.green{background:#159957;color:#fff}.btn.red{background:#d64545;color:#fff}.btn.light{background:#edf2f7;color:#223}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#172033}header{background:linear-gradient(135deg,#0d3154,#1976d2);color:#fff;padding:18px;position:sticky;top:0;z-index:5;overflow:hidden}.header-watermark{position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;opacity:.12;display:none;pointer-events:none;z-index:0}.head,header nav{position:relative;z-index:1}.head{max-width:1100px;margin:auto;display:flex;align-items:center;gap:14px}.logo{width:64px;height:64px;border-radius:50%;background:#fff;object-fit:cover;border:3px solid #f4b400}.brand h1{margin:0;font-size:23px}.brand small{opacity:.8}nav{max-width:1100px;margin:14px auto 0;display:flex;gap:7px;flex-wrap:wrap}nav button,.btn{border:0;border-radius:9px;padding:10px 13px;font-weight:700;cursor:pointer}nav button{background:#ffffff1b;color:#fff}nav button.active,nav button:hover{background:#fff;color:#123b66}.btn.primary{background:#1976d2;color:#fff}.btn.green{background:#159957;color:#fff}.btn.red{background:#d64545;color:#fff}.btn.light{background:#edf2f7;color:#223}
 main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.section.active{display:block}.card{background:#fff;border-radius:15px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px #0001}.birthday{border-left:5px solid #f4b400;background:#fff9df}.upcoming-birthday{border-left:5px solid #1976d2;background:#eef6ff;cursor:pointer}.upcoming-birthday .next-bday-name{font-size:22px;font-weight:900;color:#173b63;margin:7px 0}.upcoming-birthday .next-bday-meta{color:#52606d;font-size:14px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{font-size:14px;color:#6b7a8d}.stat b{display:block;font-size:28px;color:#172033;margin-top:5px}.toolbar{display:flex;gap:9px;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}.toolbar input{flex:1;min-width:220px}.input{padding:11px;border:1px solid #ccd5df;border-radius:8px;width:100%;margin-top:5px}.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.photo{width:54px;height:54px;border-radius:50%;object-fit:cover;background:#e8eef5;display:grid;place-items:center;overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #edf0f4;text-align:left;white-space:nowrap}th{background:#f7f9fc;font-size:13px}.tablewrap{overflow:auto}.badge{padding:5px 8px;border-radius:20px;font-size:12px;font-weight:bold}.ok{background:#dcf7e8;color:#137a43}.due{background:#fff0d5;color:#946100}.exp{background:#ffe0e0;color:#a82f2f}.modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.box{background:#fff;border-radius:16px;padding:20px;width:min(520px,100%);max-height:90vh;overflow:auto}.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px}.hint{background:#eef6ff;padding:12px;border-radius:9px;color:#24537f;font-size:14px}
 @media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.full{grid-column:auto}.brand h1{font-size:18px}th,td{font-size:12px;padding:8px}}
 
@@ -56,7 +56,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 }
 </style>
 </head><body>
-<header><div class="head"><img id="siteLogo" class="logo" alt="logo"><div class="brand"><h1 id="siteName">NORTH NILACHAL SPORTING CENTRE</h1><small id="regNo">Registration No.: S/1L/81249</small><small style="display:block;opacity:.8">Member Management System</small></div></div>
+<header><div id="headerWatermark" class="header-watermark" aria-hidden="true"></div><div class="head"><img id="siteLogo" class="logo" alt="logo"><div class="brand"><h1 id="siteName">NORTH NILACHAL SPORTING CENTRE</h1><small id="regNo">Registration No.: S/1L/81249</small><small style="display:block;opacity:.8">Member Management System</small></div></div>
 <nav><button class="active" data-tab="home">🏠 Home</button><button data-tab="members" style="font-size:15px">👥 Members</button><button data-tab="apply">📝 Membership Form</button><button data-tab="pricing">💳 Membership & Pricing</button><button id="adminBtn">🔒 Admin</button></nav></header>
 <main>
 <div class="notice-wrap">
@@ -151,7 +151,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
     </form>
   </div>
 </section>
-<section id="admin" class="section"><div class="card"><h2>🔐 Admin Settings</h2><div class="hint">Only the Admin can make changes here. Others can only view.</div><form id="settings" class="form" style="margin-top:15px"><label>ক্লাবের Name<input id="clubName" class="input" required></label><label>Registration Number<input id="regNumber" class="input" value="S/1L/81249" required></label><label class="full">Scrolling Notice<input id="scrollNotice" class="input" placeholder="এখানে চলমান নোটিশ লিখুন"></label><label>New Password<input id="newPass" class="input" type="password" placeholder="Enter only if you want to change it"></label><label class="full">Logo<input id="logoFile" class="input" type="file" accept="image/*"><img id="logoPreview" class="photo" style="width:90px;height:90px;margin-top:6px"></label><label class="full">🎙️ Voice-over / Welcome Audio<input id="voiceFile" class="input" type="file" accept="audio/*"><small style="display:block;color:#667;margin-top:5px">Admin এখান থেকে যেকোনো সময় নতুন MP3/Audio বদলাতে পারবেন। Save Settings চাপলে নতুন Voice-over সবার জন্য চালু হবে।</small><audio id="voiceAdminPreview" controls style="width:100%;margin-top:8px;display:none"></audio><button type="button" id="deleteVoiceBtn" class="btn red" style="margin-top:8px">🗑️ Delete Audio</button><small id="voiceDeleteStatus" style="display:block;color:#a82f2f;margin-top:5px"></small></label><label>🎂 Happy Birthday Music <select id="birthdayMusicAdmin" class="input"><option value="on">ON — Birthday music চালু</option><option value="off">OFF — Birthday music বন্ধ</option></select><small style="display:block;color:#667;margin-top:5px">Birthday popup খুললে ছোট Happy Birthday music বাজবে। Admin এখান থেকে ON/OFF করতে পারবেন।</small></label><label>🎚️ Voice-over Volume<input id="voiceVolumeAdmin" class="input" type="range" min="0" max="100" step="5" value="80"><small id="voiceVolumeAdminText" style="display:block;color:#667;margin-top:5px">80% — এই ভলিউমেই সবার কাছে Voice-over চলবে।</small></label><div class="full actions"><button type="submit" class="btn primary">Save Settings</button><button type="button" id="logout" class="btn light">Logout</button></div></form></div>
+<section id="admin" class="section"><div class="card"><h2>🔐 Admin Settings</h2><div class="hint">Only the Admin can make changes here. Others can only view.</div><form id="settings" class="form" style="margin-top:15px"><label>ক্লাবের Name<input id="clubName" class="input" required></label><label>Registration Number<input id="regNumber" class="input" value="S/1L/81249" required></label><label class="full">Scrolling Notice<input id="scrollNotice" class="input" placeholder="এখানে চলমান নোটিশ লিখুন"></label><label>New Password<input id="newPass" class="input" type="password" placeholder="Enter only if you want to change it"></label><label class="full">Logo<input id="logoFile" class="input" type="file" accept="image/*"><img id="logoPreview" class="photo" style="width:90px;height:90px;margin-top:6px"></label><label class="full">🖼️ Header Watermark / Club Image<input id="headerBgFile" class="input" type="file" accept="image/*" title="Maximum 100 KB"><small style="display:block;color:#667;margin-top:5px">Admin এখান থেকে আপনার পছন্দের ক্লাবের ছবি/লোগো বেছে নিতে পারবেন। ছবিটি স্বয়ংক্রিয়ভাবে compress হয়ে সর্বোচ্চ 100 KB-এর মধ্যে থাকবে এবং নীল Header-এর উপর হালকা watermark হিসেবে দেখা যাবে।</small><img id="headerBgPreview" style="display:none;width:100%;max-height:150px;object-fit:cover;border-radius:10px;margin-top:8px;border:1px solid #ccd5df"><div class="actions" style="justify-content:flex-start;margin-top:8px"><button type="button" id="deleteHeaderBgBtn" class="btn red" style="display:none">🗑️ Header Image Remove</button></div><label style="margin-top:8px;display:block">🌫️ Image Opacity<input id="headerBgOpacityAdmin" class="input" type="range" min="3" max="35" step="1" value="12"><small id="headerBgOpacityText" style="display:block;color:#667;margin-top:5px">12% — ছবিটি হালকা watermark হিসেবে থাকবে।</small></label></label><label class="full">🎙️ Voice-over / Welcome Audio<input id="voiceFile" class="input" type="file" accept="audio/*"><small style="display:block;color:#667;margin-top:5px">Admin এখান থেকে যেকোনো সময় নতুন MP3/Audio বদলাতে পারবেন। Save Settings চাপলে নতুন Voice-over সবার জন্য চালু হবে।</small><audio id="voiceAdminPreview" controls style="width:100%;margin-top:8px;display:none"></audio><button type="button" id="deleteVoiceBtn" class="btn red" style="margin-top:8px">🗑️ Delete Audio</button><small id="voiceDeleteStatus" style="display:block;color:#a82f2f;margin-top:5px"></small></label><label>🎂 Happy Birthday Music <select id="birthdayMusicAdmin" class="input"><option value="on">ON — Birthday music চালু</option><option value="off">OFF — Birthday music বন্ধ</option></select><small style="display:block;color:#667;margin-top:5px">Birthday popup খুললে ছোট Happy Birthday music বাজবে। Admin এখান থেকে ON/OFF করতে পারবেন।</small></label><label>🎚️ Voice-over Volume<input id="voiceVolumeAdmin" class="input" type="range" min="0" max="100" step="5" value="80"><small id="voiceVolumeAdminText" style="display:block;color:#667;margin-top:5px">80% — এই ভলিউমেই সবার কাছে Voice-over চলবে।</small></label><div class="full actions"><button type="submit" class="btn primary">Save Settings</button><button type="button" id="logout" class="btn light">Logout</button></div></form></div>
 
 <div class="card">
   <h2>📋 Pending Membership Applications <span id="pendingCount" class="badge due">0</span></h2>
@@ -233,7 +233,7 @@ const RAZORPAY_FUNCTION='Create-payment';
 
 let members=[];
 let applications=[];
-let settings={name:'NORTH NILACHAL SPORTING CENTRE',reg:'S/1L/81249',logo:'',voice:'',voiceVolume:0.8,birthdayMusic:true,pass:'1234',notice:'নর্থ নীলাচল স্পোটিং সেন্টারের সকল সদস্যকে মেম্বারশিপের তথ্য যাচাই ও সময়মতো মেম্বারশিপ নবীকরণ করার জন্য অনুরোধ করা হচ্ছে।'};
+let settings={name:'NORTH NILACHAL SPORTING CENTRE',reg:'S/1L/81249',logo:'',headerBg:'',headerBgOpacity:0.12,voice:'',voiceVolume:0.8,birthdayMusic:true,pass:'1234',notice:'নর্থ নীলাচল স্পোটিং সেন্টারের সকল সদস্যকে মেম্বারশিপের তথ্য যাচাই ও সময়মতো মেম্বারশিপ নবীকরণ করার জন্য অনুরোধ করা হচ্ছে।'};
 let admin=false,logoData='',memberPhoto='',appPhotoData='',renewId='',paymentId='';
 
 const $=x=>document.getElementById(x);
@@ -564,12 +564,12 @@ function unpackMediaSettings(){
   if(raw.startsWith('{') && raw.includes('"__nnsc_media"')){
     try{
       const b=JSON.parse(raw);
-      if(b.__nnsc_media){settings.logo=b.logo||'';settings.voice=b.voice||'';settings.voiceVolume=(typeof b.voiceVolume==='number'?Math.max(0,Math.min(1,b.voiceVolume)):0.8);settings.birthdayMusic=(b.birthdayMusic!==false);if(Object.prototype.hasOwnProperty.call(b,'notice'))settings.notice=String(b.notice||'');}
+      if(b.__nnsc_media){settings.logo=b.logo||'';settings.headerBg=b.headerBg||'';settings.headerBgOpacity=(typeof b.headerBgOpacity==='number'?Math.max(0.03,Math.min(0.35,b.headerBgOpacity)):0.12);settings.voice=b.voice||'';settings.voiceVolume=(typeof b.voiceVolume==='number'?Math.max(0,Math.min(1,b.voiceVolume)):0.8);settings.birthdayMusic=(b.birthdayMusic!==false);if(Object.prototype.hasOwnProperty.call(b,'notice'))settings.notice=String(b.notice||'');}
     }catch(e){console.warn('Media settings decode skipped:',e.message)}
   }
 }
 function packMediaSettings(){
-  return JSON.stringify({__nnsc_media:1,logo:settings.logo||'',voice:settings.voice||'',voiceVolume:(typeof settings.voiceVolume==='number'?Math.max(0,Math.min(1,settings.voiceVolume)):0.8),birthdayMusic:settings.birthdayMusic!==false,notice:settings.notice||''});
+  return JSON.stringify({__nnsc_media:1,logo:settings.logo||'',headerBg:settings.headerBg||'',headerBgOpacity:(typeof settings.headerBgOpacity==='number'?Math.max(0.03,Math.min(0.35,settings.headerBgOpacity)):0.12),voice:settings.voice||'',voiceVolume:(typeof settings.voiceVolume==='number'?Math.max(0,Math.min(1,settings.voiceVolume)):0.8),birthdayMusic:settings.birthdayMusic!==false,notice:settings.notice||''});
 }
 function applyVoice(){
   const a=$('siteVoice'); if(!a)return;
@@ -598,6 +598,17 @@ function apply(){
   $('siteName').textContent=settings.name||'North Nilachal Sporting Center';
   document.title=settings.name||'North Nilachal Sporting Center';
   $('regNo').textContent='Registration No.: '+(settings.reg||'S/1L/81249');
+  const hw=$('headerWatermark');
+  if(hw){
+    if(settings.headerBg){
+      hw.style.backgroundImage='url(\"'+settings.headerBg+'\")';
+      hw.style.opacity=String(typeof settings.headerBgOpacity==='number'?Math.max(0.03,Math.min(0.35,settings.headerBgOpacity)):0.12);
+      hw.style.display='block';
+    }else{
+      hw.style.backgroundImage='none';
+      hw.style.display='none';
+    }
+  }
   if(settings.logo){
     $('siteLogo').src=settings.logo;$('siteLogo').style.display='block';
     if($('logoPreview'))$('logoPreview').src=settings.logo;
@@ -612,6 +623,10 @@ function apply(){
     $('clubName').value=settings.name||'North Nilachal Sporting Center';
     $('regNumber').value=settings.reg||'S/1L/81249';
     if($('scrollNotice')) $('scrollNotice').value=settings.notice||'';
+    if($('headerBgOpacityAdmin')) $('headerBgOpacityAdmin').value=String(Math.round((typeof settings.headerBgOpacity==='number'?settings.headerBgOpacity:0.12)*100));
+    if($('headerBgOpacityText')) $('headerBgOpacityText').textContent=Math.round((typeof settings.headerBgOpacity==='number'?settings.headerBgOpacity:0.12)*100)+'% — ছবিটি হালকা watermark হিসেবে থাকবে।';
+    if($('headerBgPreview')){ $('headerBgPreview').src=settings.headerBg||''; $('headerBgPreview').style.display=settings.headerBg?'block':'none'; }
+    if($('deleteHeaderBgBtn')) $('deleteHeaderBgBtn').style.display=settings.headerBg?'inline-block':'none';
   }
 }
 
@@ -1519,6 +1534,30 @@ $('logoFile').onchange=e=>{
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();r.onload=()=>{logoData=r.result;settings.logo=logoData;$('logoPreview').src=logoData;$('logoPreview').style.display='block'};r.readAsDataURL(f);
 };
+$('headerBgFile').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{
+    settings.headerBg=await compressImageFileTo100KB(f);
+    $('headerBgPreview').src=settings.headerBg;
+    $('headerBgPreview').style.display='block';
+    $('deleteHeaderBgBtn').style.display='inline-block';
+    apply();
+  }catch(err){ alert('❌ Header Image compress করা যায়নি: '+(err.message||err)); e.target.value=''; }
+};
+$('headerBgOpacityAdmin').oninput=e=>{
+  const v=Math.max(3,Math.min(35,Number(e.target.value)||12));
+  settings.headerBgOpacity=v/100;
+  $('headerBgOpacityText').textContent=v+'% — ছবিটি হালকা watermark হিসেবে থাকবে.';
+  apply();
+};
+$('deleteHeaderBgBtn').onclick=()=>{
+  settings.headerBg='';
+  $('headerBgFile').value='';
+  $('headerBgPreview').removeAttribute('src');
+  $('headerBgPreview').style.display='none';
+  $('deleteHeaderBgBtn').style.display='none';
+  apply();
+};
 $('voiceFile').onchange=e=>{
   const f=e.target.files[0];
   if(!f)return;
@@ -1585,6 +1624,7 @@ $('settings').onsubmit=async e=>{
   settings.notice=$('scrollNotice').value.trim();
   if($('newPass').value)settings.pass=$('newPass').value;
   settings.logo=logoData||settings.logo;
+  settings.headerBgOpacity=Math.max(0.03,Math.min(0.35,Number($('headerBgOpacityAdmin').value||12)/100));
   settings.voiceVolume=Math.max(0,Math.min(1,Number($('voiceVolumeAdmin').value||80)/100));
   settings.birthdayMusic=$('birthdayMusicAdmin') ? $('birthdayMusicAdmin').value==='on' : settings.birthdayMusic!==false;
   try{
