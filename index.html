@@ -10,6 +10,8 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 .bday-modal{position:fixed;inset:0;background:rgba(16,20,35,.82);z-index:100;display:none;align-items:center;justify-content:center;padding:16px;overflow:hidden}.bday-modal.show{display:flex}.bday-box{position:relative;background:linear-gradient(145deg,#fff,#fff8fb);border-radius:28px;width:min(560px,100%);padding:32px 22px 26px;text-align:center;box-shadow:0 25px 80px #0006;overflow:hidden;animation:bdayPop .55s cubic-bezier(.2,1.4,.4,1)}.bday-box h2{margin:4px 0 8px;font-size:30px}.bday-name{font-size:34px;font-weight:900;margin:12px 0 8px}.bday-message{font-size:17px;line-height:1.7;color:#4c566a}.bday-cake{font-size:76px;animation:cakeBounce 1.2s ease-in-out infinite}.bday-close{position:absolute;right:12px;top:10px;border:0;background:#f1f3f7;border-radius:50%;width:38px;height:38px;font-size:22px;cursor:pointer}.confetti{position:absolute;inset:-20px;pointer-events:none}.confetti i{position:absolute;width:9px;height:18px;animation:confettiFall 2.8s linear infinite;opacity:.9}.balloon{position:absolute;font-size:42px;animation:balloonFloat 3.5s ease-in-out infinite}.balloon.b1{left:18px;top:70px}.balloon.b2{right:20px;top:95px;animation-delay:.5s}.balloon.b3{left:45px;bottom:30px;animation-delay:1s}.balloon.b4{right:45px;bottom:25px;animation-delay:1.4s}@keyframes bdayPop{from{transform:scale(.65) rotate(-3deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}@keyframes cakeBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes balloonFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-15px) rotate(4deg)}}@keyframes confettiFall{0%{transform:translateY(-30px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(620px) rotate(720deg);opacity:0}}
 
 .members-highlight{font-weight:700;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+
+.name-uppercase{text-transform:uppercase;}
 </style>
 <style id="voice-control-style">
 .voice-control{position:fixed;right:14px;bottom:18px;z-index:30;background:#fff;border-radius:14px;box-shadow:0 4px 18px #0003;padding:8px 10px;display:flex;align-items:center;gap:8px}.voice-btn{border:0;background:#173b63;color:#fff;border-radius:10px;width:42px;height:42px;font-size:20px;cursor:pointer}.voice-slider{width:90px;accent-color:#173b63}.voice-status{font-size:11px;color:#52606d;min-width:42px;text-align:center}@media(max-width:760px){.voice-control{right:10px;bottom:10px;padding:6px}.voice-slider{width:65px}}
@@ -70,7 +72,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 <audio id="siteVoice" preload="auto"></audio>
 
 <section id="home" class="section active"><div id="loadingNotice" class="card hint" style="display:none;text-align:center;font-weight:700">⏳ Member details are loading…</div><div id="birthdayTop"></div><div class="grid"><div class="card stat" id="totalMembersCard" role="button" tabindex="0" title="View all members" style="cursor:pointer">Total Members<b id="total">0</b></div><div class="card stat" id="birthdayTodayCard" role="button" tabindex="0" title="View today’s birthdays" style="cursor:pointer">Birthdays Today<b id="birthdayTodayCount">0</b></div><div class="card stat" id="renewalDueCard" role="button" tabindex="0" title="View renewal due members" style="cursor:pointer">Renewal Due<b id="due">0</b></div><div class="card stat" id="expiredCard" role="button" tabindex="0" title="View expired members" style="cursor:pointer">Expired<b id="expired">0</b></div></div><div class="card upcoming-birthday" id="upcomingBirthdayCard" role="button" tabindex="0" title="Click to view next member birthday"><h2>🎂 Upcoming Birthday</h2><div id="upcomingBirthdayInfo" style="display:none;margin-top:7px"><b class="next-bday-name" id="nextBdayName"></b><div class="next-bday-meta" id="nextBdayMeta"></div></div></div></section>
-<section id="members" class="section"><div class="toolbar"><input id="search" class="input" placeholder="Name/Mobile দিয়ে খুঁজুন"><button id="addBtn" class="btn primary" style="display:none">+ Add Member</button></div><div class="card tablewrap"><table><thead><tr><th>Photo</th><th>Member ID</th><th id="memberTypeHead" style="display:none">Member Type</th><th>Name</th><th>Gender</th><th>Blood Group</th><th id="dobHead">Date of Birth</th><th id="feeHead" style="display:none">Fee</th><th>Payment Date</th><th>Validity</th><th id="aadhaarHead">Aadhaar (Last 4)</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<section id="members" class="section"><div class="toolbar"><input id="search" class="input" placeholder="Name/Mobile দিয়ে খুঁজুন"><button id="addBtn" class="btn primary" style="display:none">+ Add Member</button></div><div class="card tablewrap"><table><thead><tr><th>Photo</th><th>Member ID</th><th id="memberTypeHead" style="display:none">Member Type</th><th>Name</th><th>Gender</th><th>Blood Group</th><th id="dobHead">Date of Birth</th><th id="feeHead" style="display:none">Fee</th><th>Payment Date</th><th>Validity</th><th id="aadhaarHead">Aadhaar (Last 4)</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"><tr><td colspan="13">⏳ Members loading...</td></tr></tbody></table></div></section>
 
 <section id="pricing" class="section">
   <div class="card">
@@ -123,7 +125,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
     <h2>📝 Membership Application</h2>
     <div class="hint">Payment করার পর এই ফর্মটি পূরণ করুন। Admin payment যাচাই করে Approve করলে তবেই Member ID তৈরি হবে।</div>
     <form id="applicationForm" class="form" style="margin-top:15px">
-      <label>Name *<input id="appName" class="input" required></label>
+      <label>Name *<input id="appName" class="input name-uppercase" required autocomplete="name" style="text-transform:uppercase"></label>
       <label>Mobile *<input id="appPhone" class="input" required></label>
       <label>Aadhaar Number *<input id="appAadhaar" class="input" maxlength="12" inputmode="numeric" placeholder="12 digits" required></label>
       <label>Date of Birth *<input id="appDob" class="input" type="date" required></label>
@@ -173,7 +175,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 </div>
 <div class="card"><h2>📝 Admin Direct Member Add</h2><p class="hint">🔐 <b>Admin Login অবস্থায়</b> আপনি যাকে ইচ্ছা নতুন Member হিসেবে সরাসরি যোগ করতে পারবেন। <b>কোনও Online Payment, Pay Now, UTR বা Transaction ID-এর প্রয়োজন নেই।</b> Form Save করলেই Member সরাসরি Member List-এ যুক্ত হবে এবং পরবর্তী serial অনুযায়ী Member ID তৈরি হবে।</p><div class="actions" style="justify-content:flex-start"><button type="button" id="adminFillMembershipBtn" class="btn primary">➕ Add New Member (Admin — No Payment)</button></div></div>
 <div class="card"><h2>Admin Member Management</h2><p class="hint">🔐 শুধুমাত্র Admin Login করার পরই Member Add করা যাবে। Admin চাইলে কোনো payment ছাড়াই Member তৈরি করতে পারবেন এবং পরে সদস্যের Payment/Renewal নেওয়া যাবে।</p><p>Member list থেকে Edit, Delete ও Renewal করা যাবে।</p><p class="hint">Membership validity: প্রতি মাসে ₹100। একজন সদস্য যত টাকা জমা দেবেন, ₹100 করে তত মাস Membership Validity থাকবে। Membership June 2026 থেকে শুরু হয়েছে।</p><p class="hint">নোট: সাধারণ সদস্যরা Date of Birth দেখতে পারবে না। শুধুমাত্র Admin Member Management-এ সম্পূর্ণ Date of Birth দেখা যাবে। Member list-এর serial শেষের ২টি সংখ্যা অনুযায়ী 01, 02, 03...99 ক্রমে সাজানো হবে। Regular Member-এর serial আলাদা ধারাবাহিক হবে। Donor → Regular করলে Regular list-এর পরের serial দেওয়া হবে—যেমন Regular 020 পর্যন্ত থাকলে Donor-কে Regular করলে NNSC0626021 হবে এবং তালিকায় 21 নম্বরে চলে আসবে। Regular → Donor করলে বর্তমান serial রাখা হবে। Admin Member Type থেকে কে Donor Member হবেন তা নির্ধারণ করবেন; Donor ID-র D code দিয়েই Donor চিহ্নিত হবে, তাই আলাদা database column প্রয়োজন নেই।</p></div></section>
-<section id="add" class="section"><div class="card"><h2 id="formTitle">New Member</h2><form id="memberForm" class="form"><input type="hidden" id="eid"><label>Member ID *<input id="memberId" class="input" placeholder="NNSC0626001 / NNSCD0626001" required readonly></label><label><span>Member Type</span><select id="memberType" class="input"><option value="regular">Regular Member</option><option value="donor">Donor Member (D)</option></select><small style="display:block;color:#667;margin-top:5px">Donor/Regular পরিবর্তন করলে বিদ্যমান Member ID ও serial অপরিবর্তিত থাকবে; নির্বাচিত status এই browser-এ সংরক্ষিত থাকবে: NNSCD0626001, NNSCD0626002...</small></label><label>Name *<input id="name" class="input" required></label><label>Mobile<input id="phone" class="input"></label><label>Aadhaar Number<input id="aadhaar" class="input" maxlength="12" inputmode="numeric" placeholder="12 digits"></label><label>Date of Birth *<input id="dob" class="input" type="date" required></label><label>Gender *<select id="gender" class="input" required><option value="Male" selected>Male</option><option value="Female">Female</option><option value="Other">Other</option></select></label><label>Blood Group<select id="blood" class="input"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></label><label>Membership Plan (Admin can add without payment)
+<section id="add" class="section"><div class="card"><h2 id="formTitle">New Member</h2><form id="memberForm" class="form"><input type="hidden" id="eid"><label>Member ID *<input id="memberId" class="input" placeholder="NNSC0626001 / NNSCD0626001" required readonly></label><label><span>Member Type</span><select id="memberType" class="input"><option value="regular">Regular Member</option><option value="donor">Donor Member (D)</option></select><small style="display:block;color:#667;margin-top:5px">Donor/Regular পরিবর্তন করলে বিদ্যমান Member ID ও serial অপরিবর্তিত থাকবে; নির্বাচিত status এই browser-এ সংরক্ষিত থাকবে: NNSCD0626001, NNSCD0626002...</small></label><label>Name *<input id="name" class="input name-uppercase" required autocomplete="name" style="text-transform:uppercase"></label><label>Mobile<input id="phone" class="input"></label><label>Aadhaar Number<input id="aadhaar" class="input" maxlength="12" inputmode="numeric" placeholder="12 digits"></label><label>Date of Birth *<input id="dob" class="input" type="date" required></label><label>Gender *<select id="gender" class="input" required><option value="Male" selected>Male</option><option value="Female">Female</option><option value="Other">Other</option></select></label><label>Blood Group<select id="blood" class="input"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></label><label>Membership Plan (Admin can add without payment)
 <select id="fee" class="input">
           <option value="100">₹100 — 1 Month</option>
           <option value="200">₹200 — 2 Months</option>
@@ -354,6 +356,7 @@ function fmtDOB(d){
 }
 function fmtDateTime(d){return d?new Date(d).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}):'—'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function memberName(name){return String(name??'').trim().toUpperCase()}
 function st(m){
   let e=validityDate(m);
   if(Number(m.fee||0)<=0)return ['due','Payment Pending'];
@@ -641,7 +644,7 @@ function showRenewalDueFromHome(){
   $('rows').innerHTML=list.length?list.map(m=>{
     let s=st(m),id=getMemberId(m)||'—';
     return '<tr><td><div class="photo member-photo" data-photo-id="'+esc(String(m.id||''))+'">👤</div></td>'+
-      '<td><b>'+esc(id)+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+(isDonor(m)?'<span class="badge" style="background:#fff0c2;color:#8a5a00">⭐ Donor</span>':'<span class="badge" style="background:#eef2f7;color:#52606d">Member</span>')+'</td><td><b>'+esc(m.name)+'</b><small style="display:block;color:#778">'+esc(m.phone||'')+
+      '<td><b>'+esc(id)+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+(isDonor(m)?'<span class="badge" style="background:#fff0c2;color:#8a5a00">⭐ Donor</span>':'<span class="badge" style="background:#eef2f7;color:#52606d">Member</span>')+'</td><td><b>'+esc(memberName(m.name))+'</b><small style="display:block;color:#778">'+esc(m.phone||'')+
       (m.phone?'<a class="wa-btn" href="https://wa.me/'+String(m.phone).replace(/\D/g,'')+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')+
       '</small></td><td><b>'+esc(m.gender||'Male')+'</b></td><td><b>'+esc(m.blood||'—')+'</b></td>'+
       '<td style="display:'+(admin?'table-cell':'none')+'">'+fmtDOB(m.dob)+'</td><td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td>'+
@@ -664,7 +667,7 @@ function showExpiredFromHome(){
     let status=st(m),id=getMemberId(m)||'—';
     return '<tr><td><div class="photo member-photo" data-photo-id="'+esc(String(m.id||''))+'">👤</div></td>'+
       '<td><b>'+esc(id)+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+(isDonor(m)?'<span class="badge" style="background:#fff0c2;color:#8a5a00">⭐ Donor</span>':'<span class="badge" style="background:#eef2f7;color:#52606d">Member</span>')+'</td>'+
-      '<td><b>'+esc(m.name)+'</b><small style="display:block;color:#778">'+esc(m.phone||'')+(m.phone?'<a class="wa-btn" href="https://wa.me/'+String(m.phone).replace(/\D/g,'')+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')+'</small></td>'+
+      '<td><b>'+esc(memberName(m.name))+'</b><small style="display:block;color:#778">'+esc(m.phone||'')+(m.phone?'<a class="wa-btn" href="https://wa.me/'+String(m.phone).replace(/\D/g,'')+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')+'</small></td>'+
       '<td><b>'+esc(m.gender||'Male')+'</b></td><td><b>'+esc(m.blood||'—')+'</b></td>'+
       '<td style="display:'+(admin?'table-cell':'none')+'">'+fmtDOB(m.dob)+'</td><td style="display:'+(admin?'table-cell':'none')+'">₹'+Number(m.fee||0)+'</td>'+
       '<td>'+fmt(m.paid)+'</td><td>'+(validityDate(m)?fmt(validityDate(m)):'—')+' <small style="display:block;color:#778">'+(validityMonths(m)>0?validityMonths(m)+' মাস':'—')+'</small></td>'+
@@ -738,17 +741,18 @@ function render(){
   $('birthdayTodayCount').textContent=b.length;
   $('due').textContent=members.filter(m=>st(m)[0]==='due').length;
   $('expired').textContent=members.filter(m=>st(m)[0]==='exp').length;
-  $('birthdayTop').innerHTML=b.length?'<div class="card birthday"><h2>🎉 Birthdays Today!</h2><b>'+b.map(x=>esc(x.name)).join(', ')+'</b></div>':'';
+  $('birthdayTop').innerHTML=b.length?'<div class="card birthday"><h2>🎉 Birthdays Today!</h2><b>'+b.map(x=>esc(memberName(x.name))).join(', ')+'</b></div>':'';
   rows();
 }
 function rows(){
-  let q=($('search').value||'').toLowerCase();
-  let list=sortedMembers(members.filter(m=>(String(m.name||'')+' '+String(m.phone||'')).toLowerCase().includes(q)));
+  try{
+    let q=($('search').value||'').toLowerCase();
+    let list=sortedMembers(members.filter(m=>(String(m.name||'')+' '+String(m.phone||'')+' '+String(m.mobile||'')).toLowerCase().includes(q)));
   $('dobHead').style.display=admin?'table-cell':'none';$('feeHead').style.display=admin?'table-cell':'none';if($('memberTypeHead'))$('memberTypeHead').style.display=admin?'table-cell':'none';if($('aadhaarHead'))$('aadhaarHead').textContent=admin?'Aadhaar Number':'Aadhaar (Last 4)';
   $('rows').innerHTML=list.length?list.map(m=>{
     let s=st(m),id=getMemberId(m)||'—';
     return '<tr><td><div class="photo member-photo" data-photo-id="'+esc(String(m.id||''))+'">👤</div></td>'+
-      '<td><b>'+esc(id)+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+(isDonor(m)?'<span class="badge" style="background:#fff0c2;color:#8a5a00">⭐ Donor</span>':'<span class="badge" style="background:#eef2f7;color:#52606d">Member</span>')+'</td><td><b>'+esc(m.name)+'<small style="display:block;color:#778">'+esc(m.phone||'')+
+      '<td><b>'+esc(id)+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+(isDonor(m)?'<span class="badge" style="background:#fff0c2;color:#8a5a00">⭐ Donor</span>':'<span class="badge" style="background:#eef2f7;color:#52606d">Member</span>')+'</td><td><b>'+esc(memberName(m.name))+'<small style="display:block;color:#778">'+esc(m.phone||'')+
         (m.phone?'<a class="wa-btn" href="https://wa.me/'+String(m.phone).replace(/\D/g,'')+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')+
         '</small></td>'+
       '<td><b>'+esc(m.gender||'Male')+'</b></td><td><b>'+esc(m.blood||'—')+'</b></td><td style="display:'+(admin?'table-cell':'none')+'">'+fmtDOB(m.dob)+'</td>'+
@@ -757,7 +761,12 @@ function rows(){
       '<td>'+ (admin ? esc(String(m.aadhaar||'—')) : 'XXXX-XXXX-'+esc(String(m.aadhaar||'').slice(-4)||'—')) +'</td><td><span class="badge '+s[0]+'">'+s[1]+'</span></td>'+
       '<td>'+ (admin?'<button class="btn light" onclick="editM(\''+m.id+'\')">Edit</button> <button class="btn green" onclick="openR(\''+m.id+'\')">Renew</button> <button class="btn red" onclick="delM(\''+m.id+'\')">Delete</button>': ((s[0]==='due'||s[0]==='exp')?'<button class="btn green" onclick="openPayment(\''+m.id+'\')">💳 '+(s[0]==='due'?'Renew Membership':'Pay Membership')+'</button>':(s[0]==='ok'?'<span class="badge ok">Active</span>':'—')))+'</td></tr>';
   }).join(''):'<tr><td colspan="13">No members found.</td></tr>';
-  if(list.length) requestAnimationFrame(()=>loadMemberPhotosFast(list));
+    if(list.length) requestAnimationFrame(()=>loadMemberPhotosFast(list));
+  }catch(e){
+    console.error('Member table render failed:',e);
+    $('rows').innerHTML='<tr><td colspan="13">Member list render error. Please reload the page.</td></tr>';
+    showError('Member table render failed: '+e.message);
+  }
 }
 
 
@@ -834,7 +843,7 @@ async function openMemberPhoto(id){
   }
   if(!src)return alert('এই সদস্যের ছবি পাওয়া যায়নি।');
   $('photoViewerImg').src=src;
-  $('photoViewerName').textContent=(m&&m.name)||'';
+  $('photoViewerName').textContent=memberName(m&&m.name)||'';
   $('photoViewer').classList.add('show');
 }
 $('photoViewerClose').onclick=closeMemberPhoto;
@@ -925,7 +934,24 @@ async function loadData(){
   setLoading(!hadCache);
 
   // Refresh members and settings in parallel.
-  const membersPromise=rest('/members?select=id,member_id,name,phone,aadhaar,dob,blood,fee,paid,validity_end,address&order=name.asc').then(async data=>{
+  // Load only the fields needed for the member table. The database currently
+  // has both legacy `memberid` and newer `member_id`, so read both and
+  // normalize them below. If the full query ever fails because of a stale
+  // PostgREST schema cache, fall back to a smaller query instead of showing
+  // an empty member table.
+  const membersPromise=(async()=>{
+    let data;
+    let primaryErr=null;
+    try{
+      data=await rest('/members?select=id,memberid,member_id,name,phone,mobile,aadhaar,dob,blood,fee,paid,validity_end,address&order=name.asc');
+    }catch(e){
+      primaryErr=e;
+      try{
+        data=await rest('/members?select=id,memberid,member_id,name,phone,mobile,fee,paid,validity_end,address&order=name.asc');
+      }catch(fallbackErr){
+        throw new Error('Members list load failed: '+fallbackErr.message+(primaryErr?' (primary query: '+primaryErr.message+')':''));
+      }
+    }
     const serverRows=Array.isArray(data)?data:[];
     // Keep the known-good local list if the server temporarily returns an
     // empty result (for example during an RLS/network hiccup).
@@ -935,7 +961,7 @@ async function loadData(){
       return;
     }
     members=serverRows.map(m=>{
-      const x={...m,member_id:(m.member_id??''),member_type:savedMemberType(m.id),gender:(m.gender||'Male')};
+      const x={...m,member_id:String((m.member_id??m.memberid??'')).trim(),phone:String((m.phone??m.mobile??'')).trim(),member_type:savedMemberType(m.id),gender:(m.gender||'Male')};
       if(String(x.name||'').trim().toLowerCase()==='prasanta basu') x.member_id='NNSC0626001';
       if(!x.validity_end && x.paid && Number(x.fee)>0) x.validity_end=validityDate(x);
       return x;
@@ -995,7 +1021,7 @@ async function loadApplications(){
 function renderApplications(){
   const pending=applications.filter(a=>(a.status||'pending')==='pending');
   $('pendingCount').textContent=pending.length;
-  $('applicationRows').innerHTML=pending.length?pending.map(a=>'<tr><td><b>'+esc(a.name)+'</b></td><td>'+esc(a.phone||'—')+'</td><td>₹'+Number(a.fee||0)+' ('+validityMonths(a)+' মাস)</td><td>'+esc(a.transaction_id||'—')+'</td><td>'+fmtDateTime(a.payment_time)+'</td><td>'+fmt(a.paid)+'</td><td>'+ (a.created_at?fmtDateTime(a.created_at):'—')+'</td><td><button class="btn green" onclick="approveApplication(\''+a.id+'\')">Verify & Approve</button> <button class="btn red" onclick="rejectApplication(\''+a.id+'\')">Reject</button></td></tr>').join(''):'<tr><td colspan="8">No pending applications.</td></tr>';
+  $('applicationRows').innerHTML=pending.length?pending.map(a=>'<tr><td><b>'+esc(memberName(a.name))+'</b></td><td>'+esc(a.phone||'—')+'</td><td>₹'+Number(a.fee||0)+' ('+validityMonths(a)+' মাস)</td><td>'+esc(a.transaction_id||'—')+'</td><td>'+fmtDateTime(a.payment_time)+'</td><td>'+fmt(a.paid)+'</td><td>'+ (a.created_at?fmtDateTime(a.created_at):'—')+'</td><td><button class="btn green" onclick="approveApplication(\''+a.id+'\')">Verify & Approve</button> <button class="btn red" onclick="rejectApplication(\''+a.id+'\')">Reject</button></td></tr>').join(''):'<tr><td colspan="8">No pending applications.</td></tr>';
 }
 
 window.approveApplication=async id=>{
@@ -1027,7 +1053,7 @@ window.approveApplication=async id=>{
 
     if(!confirm(
       'Payment Verify & Approve করবেন?\\n\\n'+
-      'Member: '+(a.name||m.name)+'\\n'+
+      'Member: '+(memberName(a.name)||memberName(m.name))+'\\n'+
       'Amount: ₹'+fee+' = '+months+' মাস\\n'+
       'UTR: '+txn+'\\n\\n'+
       'New validity: '+fmt(base)+' to '+fmt(newEnd)
@@ -1054,12 +1080,12 @@ window.approveApplication=async id=>{
 
   // New member application: Admin approval creates the member and assigns
   // the initial validity. No validity is assigned before this approval.
-  if(!confirm(a.name+'-এর payment verify করে Member ID ও validity approve করবেন?'))return;
+  if(!confirm(memberName(a.name)+'-এর payment verify করে Member ID ও validity approve করবেন?'))return;
   const newId=nextMemberId('regular');
   const memberFee=fee;
   const memberPaid=a.paid||todayISO();
   const memberValidity=memberFee>0?addMonths(memberPaid,validityMonths({fee:memberFee})):null;
-  const member={id:crypto.randomUUID(),member_id:newId,name:a.name||'',phone:a.phone||'',aadhaar:a.aadhaar||'',dob:a.dob||'',blood:a.blood||'',fee:memberFee,paid:memberPaid,validity_end:memberValidity,address:a.address||'',photo:a.photo||''};
+  const member={id:crypto.randomUUID(),member_id:newId,name:memberName(a.name),phone:a.phone||'',aadhaar:a.aadhaar||'',dob:a.dob||'',blood:a.blood||'',fee:memberFee,paid:memberPaid,validity_end:memberValidity,address:a.address||'',photo:a.photo||''};
   try{
     await rest('/members',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(member)});
     await rest('/membership_applications?id=eq.'+encodeURIComponent(id),{
@@ -1246,7 +1272,7 @@ $('applicationForm').onsubmit=async e=>{
     const memberType=($('memberType')?.value||'regular');
     const memberId=await nextMemberIdFresh(memberType);
     const paid=$('appPaid').value||todayISO();
-    const member={id:crypto.randomUUID(),member_id:memberId,name:$('appName').value.trim(),phone:$('appPhone').value.trim(),aadhaar:a,dob:$('appDob').value,blood:$('appBlood').value,fee:paymentAmount,paid,validity_end:paymentAmount>0?addMonths(paid,validityMonths({fee:paymentAmount})):null,address:$('appAddress').value.trim(),photo:appPhotoData||''};
+    const member={id:crypto.randomUUID(),member_id:memberId,name:memberName($('appName').value),phone:$('appPhone').value.trim(),aadhaar:a,dob:$('appDob').value,blood:$('appBlood').value,fee:paymentAmount,paid,validity_end:paymentAmount>0?addMonths(paid,validityMonths({fee:paymentAmount})):null,address:$('appAddress').value.trim(),photo:appPhotoData||''};
     try{
       await rest('/members',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(member)});
       saveMemberType(member.id,'regular');
@@ -1263,7 +1289,7 @@ $('applicationForm').onsubmit=async e=>{
   if(paymentAmount<100)return alert('Minimum membership payment ₹100 করতে হবে');
   if(!window.appPaymentStarted)return alert('প্রথমে Pay Now চাপুন এবং payment সম্পূর্ণ করুন');
   if(!txn)return alert('Payment Transaction ID / UTR অবশ্যই দিতে হবে');
-  const payload={name:$('appName').value.trim(),phone:$('appPhone').value.trim(),aadhaar:a,dob:$('appDob').value,blood:$('appBlood').value,fee:paymentAmount,paid:($('appPaid').value||todayISO()),address:$('appAddress').value.trim(),photo:appPhotoData,status:'pending',transaction_id:txn,payment_time:(window.appPaymentTime||new Date().toISOString()),member_id:existingMemberId};
+  const payload={name:memberName($('appName').value),phone:$('appPhone').value.trim(),aadhaar:a,dob:$('appDob').value,blood:$('appBlood').value,fee:paymentAmount,paid:($('appPaid').value||todayISO()),address:$('appAddress').value.trim(),photo:appPhotoData,status:'pending',transaction_id:txn,payment_time:(window.appPaymentTime||new Date().toISOString()),member_id:existingMemberId};
   try{
     await rest('/membership_applications',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(payload)});
     $('applicationForm').reset();
@@ -1332,7 +1358,7 @@ $('memberForm').onsubmit=async e=>{
   const selectedFee=Number($('fee').value||0); const selectedPaid=selectedFee>0?$('paid').value:'';
   const existing=members.find(x=>x.id===id);
   const calculatedValidity=selectedFee>0&&selectedPaid?addMonths(selectedPaid,validityMonths({fee:selectedFee})):null;
-  let m={id,member_id:memberId,name:$('name').value.trim(),phone:$('phone').value.trim(),aadhaar:a,dob:$('dob').value,blood:$('blood').value,fee:selectedFee,paid:selectedPaid,validity_end:calculatedValidity||existing?.validity_end||null,address:$('address').value.trim(),photo:memberPhoto};
+  let m={id,member_id:memberId,name:memberName($('name').value),phone:$('phone').value.trim(),aadhaar:a,dob:$('dob').value,blood:$('blood').value,fee:selectedFee,paid:selectedPaid,validity_end:calculatedValidity||existing?.validity_end||null,address:$('address').value.trim(),photo:memberPhoto};
   try{
     const old=members.some(x=>x.id===id);
     await rest('/members?id=eq.'+encodeURIComponent(id),{method:old?'PATCH':'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(old?m:m)});
@@ -1346,7 +1372,7 @@ $('memberForm').onsubmit=async e=>{
 
 window.editM=async id=>{
   if(!admin)return;let m=members.find(x=>x.id===id);if(!m)return;
-  openTab('add');$('formTitle').textContent='Edit Member';$('eid').value=m.id;$('memberType').value=isDonor(m)?'donor':'regular';$('memberId').value=getMemberId(m)||nextMemberId($('memberType').value);$('name').value=m.name||'';$('phone').value=m.phone||'';$('aadhaar').value=m.aadhaar||'';$('dob').value=m.dob||'';$('gender').value=m.gender||'Male';$('blood').value=m.blood||'';$('fee').value=m.fee||100;$('paid').value=m.paid||'';$('address').value=m.address||'';memberPhoto='';$('memberPreview').removeAttribute('src');$('deleteMemberPhotoBtn').style.display='none';$('memberPhotoDeleteStatus').textContent='';
+  openTab('add');$('formTitle').textContent='Edit Member';$('eid').value=m.id;$('memberType').value=isDonor(m)?'donor':'regular';$('memberId').value=getMemberId(m)||nextMemberId($('memberType').value);$('name').value=memberName(m.name);$('phone').value=m.phone||'';$('aadhaar').value=m.aadhaar||'';$('dob').value=m.dob||'';$('gender').value=m.gender||'Male';$('blood').value=m.blood||'';$('fee').value=m.fee||100;$('paid').value=m.paid||'';$('address').value=m.address||'';memberPhoto='';$('memberPreview').removeAttribute('src');$('deleteMemberPhotoBtn').style.display='none';$('memberPhotoDeleteStatus').textContent='';
   try{
     const d=await rest('/members?id=eq.'+encodeURIComponent(id)+'&select=photo&limit=1');
     memberPhoto=(Array.isArray(d)&&d[0]&&d[0].photo)||'';
@@ -1393,7 +1419,7 @@ $('deleteMemberPhotoBtn').onclick=async()=>{
 
 window.openR=id=>{
   if(!admin)return;renewId=id;let m=members.find(x=>x.id===id);if(!m)return;
-  $('renewText').innerHTML='<b>'+esc(m.name)+'</b>-’s membership renewal.';$('renewPlan').value='100';$('renewDate').value=iso(today);$('renew').classList.add('show');
+  $('renewText').innerHTML='<b>'+esc(memberName(m.name))+'</b>-’s membership renewal.';$('renewPlan').value='100';$('renewDate').value=iso(today);$('renew').classList.add('show');
 };
 $('closeRenew').onclick=()=>$('renew').classList.remove('show');
 $('doRenew').onclick=()=>{
@@ -1406,7 +1432,7 @@ window.openPayment=id=>{
   paymentId=id;let m=members.find(x=>x.id===id);if(!m)return;
   const end=validityDate(m);
   const expiredStart=end?addDays(end,1):iso(today);
-  $('paymentText').innerHTML='<b>'+esc(m.name)+'</b><br>Current status: '+esc(st(m)[1])+'<br>Choose the amount you want to pay.';
+  $('paymentText').innerHTML='<b>'+esc(memberName(m.name))+'</b><br>Current status: '+esc(st(m)[1])+'<br>Choose the amount you want to pay.';
   $('paymentPlan').value='100';
   $('paymentTxn').value='';
   if($('paymentTxnWrap'))$('paymentTxnWrap').style.display='none';
