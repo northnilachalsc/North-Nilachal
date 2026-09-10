@@ -242,9 +242,11 @@ const $=x=>document.getElementById(x);
 const today=new Date();
 
 function headers(extra={}){
+  // The project uses a Supabase publishable key. For PostgREST, the
+  // publishable key belongs in `apikey`; sending it as a Bearer JWT can
+  // cause auth failures on some browsers/devices.
   return {
     'apikey':SUPABASE_ANON_KEY,
-    'Authorization':'Bearer '+SUPABASE_ANON_KEY,
     'Content-Type':'application/json',
     ...extra
   };
