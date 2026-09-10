@@ -71,7 +71,7 @@ main{max-width:1100px;margin:22px auto;padding:0 14px}.section{display:none}.sec
 </div>
 <audio id="siteVoice" preload="auto"></audio>
 
-<section id="home" class="section active"><div id="loadingNotice" class="card hint" style="display:none;text-align:center;font-weight:700">⏳ Member details are loading…</div><div id="birthdayTop"></div><div class="grid"><div class="card stat" id="totalMembersCard" role="button" tabindex="0" title="View all members" style="cursor:pointer">Total Members<b id="total">0</b></div><div class="card stat" id="birthdayTodayCard" role="button" tabindex="0" title="View today’s birthdays" style="cursor:pointer">Birthdays Today<b id="birthdayTodayCount">0</b></div><div class="card stat" id="renewalDueCard" role="button" tabindex="0" title="View renewal due members" style="cursor:pointer">Renewal Due<b id="due">0</b></div><div class="card stat" id="expiredCard" role="button" tabindex="0" title="View expired members" style="cursor:pointer">Expired<b id="expired">0</b></div></div><div class="card upcoming-birthday" id="upcomingBirthdayCard" role="button" tabindex="0" title="Click to view next member birthday"><h2>🎂 Upcoming Birthday</h2><div id="upcomingBirthdayInfo" style="display:none;margin-top:7px"><b class="next-bday-name" id="nextBdayName"></b><div class="next-bday-meta" id="nextBdayMeta"></div></div></div></section>
+<section id="home" class="section active"><div id="loadingNotice" class="card hint" style="display:none;text-align:center;font-weight:700">⏳ Member details are loading…</div><div id="diagnosticNotice" class="card" style="display:none;margin:8px 0;background:#fff7ed;color:#9a3412;border-left:5px solid #ea580c"><b>⚠️ Member data connection problem</b><div id="diagnosticText" style="margin-top:6px;white-space:pre-wrap;font-size:14px"></div></div><div id="birthdayTop"></div><div class="grid"><div class="card stat" id="totalMembersCard" role="button" tabindex="0" title="View all members" style="cursor:pointer">Total Members<b id="total">0</b></div><div class="card stat" id="birthdayTodayCard" role="button" tabindex="0" title="View today’s birthdays" style="cursor:pointer">Birthdays Today<b id="birthdayTodayCount">0</b></div><div class="card stat" id="renewalDueCard" role="button" tabindex="0" title="View renewal due members" style="cursor:pointer">Renewal Due<b id="due">0</b></div><div class="card stat" id="expiredCard" role="button" tabindex="0" title="View expired members" style="cursor:pointer">Expired<b id="expired">0</b></div></div><div class="card upcoming-birthday" id="upcomingBirthdayCard" role="button" tabindex="0" title="Click to view next member birthday"><h2>🎂 Upcoming Birthday</h2><div id="upcomingBirthdayInfo" style="display:none;margin-top:7px"><b class="next-bday-name" id="nextBdayName"></b><div class="next-bday-meta" id="nextBdayMeta"></div></div></div></section>
 <section id="members" class="section"><div class="toolbar"><input id="search" class="input" placeholder="Name/Mobile দিয়ে খুঁজুন"><button id="addBtn" class="btn primary" style="display:none">+ Add Member</button></div><div class="card tablewrap"><table><thead><tr><th>Photo</th><th>Member ID</th><th id="memberTypeHead" style="display:none">Member Type</th><th>Name</th><th>Gender</th><th>Blood Group</th><th id="dobHead">Date of Birth</th><th id="feeHead" style="display:none">Fee</th><th>Payment Date</th><th>Validity</th><th id="aadhaarHead">Aadhaar (Last 4)</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"><tr><td colspan="13">⏳ Members loading...</td></tr></tbody></table></div></section>
 
 <section id="pricing" class="section">
@@ -919,6 +919,15 @@ function setLoading(show){
   const x=$('loadingNotice');
   if(x)x.style.display=show?'block':'none';
 }
+function showDiagnostic(msg){
+  const box=$('diagnosticNotice'), text=$('diagnosticText');
+  if(text) text.textContent=String(msg||'Unknown error');
+  if(box) box.style.display='block';
+}
+function hideDiagnostic(){
+  const box=$('diagnosticNotice');
+  if(box) box.style.display='none';
+}
 
 // Notice is kept locally because the current Supabase settings table does not
 // have a `notice` column. This prevents Save Settings from failing while
@@ -937,7 +946,15 @@ function saveLocalNotice(){
 async function loadData(){
   // Cache-first: show the last known member list immediately.
   const hadCache=loadFastCache();
+  hideDiagnostic();
   setLoading(!hadCache);
+
+  // Hard watchdog: never leave the home page stuck on Loading forever.
+  // If the browser/network/Supabase request hangs, show a visible diagnostic.
+  const watchdog=setTimeout(()=>{
+    setLoading(false);
+    if(!members.length) showDiagnostic('Supabase member request did not finish within 12 seconds. Please check the internet connection and Supabase access from this device.');
+  },12000);
 
   // Refresh members and settings in parallel.
   // Load only the fields needed for the member table. The database currently
@@ -999,7 +1016,9 @@ async function loadData(){
   });
 
   await membersPromise.catch(()=>{});
+  clearTimeout(watchdog);
   apply(); render(); setLoading(false);
+  if(!members.length) showDiagnostic('No member rows were loaded from Supabase. Open the page again after a few seconds; if this message remains, send me a screenshot of this message.');
   settingsPromise.catch(()=>{});
 }
 
@@ -1997,7 +2016,14 @@ $('downloadAllForms').onclick=downloadAllMemberForms;
 $('printAllForms').onclick=printAllMemberForms;
 $('compressOldPhotos').onclick=compressExistingMemberPhotos;
 
-window.addEventListener('error',e=>console.error(e.error||e.message));
+window.addEventListener('error',e=>{
+  console.error(e.error||e.message);
+  if(!members.length) showDiagnostic('JavaScript error: '+(e.message||'Unknown browser error'));
+});
+window.addEventListener('unhandledrejection',e=>{
+  console.error(e.reason);
+  if(!members.length) showDiagnostic('Unhandled promise error: '+(e.reason?.message||String(e.reason||'Unknown error')));
+});
 openTab('home');
 loadFastCache();
 apply();
