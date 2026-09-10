@@ -358,17 +358,21 @@ function fmtDateTime(d){return d?new Date(d).toLocaleString('en-IN',{day:'2-digi
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function memberName(name){return String(name??'').trim().toUpperCase()}
 function st(m){
-  let e=validityDate(m);
+  let e=String(validityDate(m)||'').slice(0,10);
   if(Number(m.fee||0)<=0)return ['due','Payment Pending'];
-  if(!e)return ['exp','Validity নেই'];
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(e))return ['exp','Validity নেই'];
 
-  // Calendar-month status: active month -> one full renewal-due month -> expired.
-  const todayMonth=(today.getFullYear()*12)+today.getMonth();
-  const endDate=new Date(e+'T00:00:00');
-  const endMonth=(endDate.getFullYear()*12)+endDate.getMonth();
+  // Compare calendar months as YYYY-MM strings. This avoids timezone/date-parsing
+  // differences between devices and keeps the September 2026 renewal window exact.
+  const currentMonth=todayISO().slice(0,7);
+  const endMonth=e.slice(0,7);
+  const [cy,cm]=currentMonth.split('-').map(Number);
+  const [ey,em]=endMonth.split('-').map(Number);
+  const currentIndex=(cy*12)+cm;
+  const endIndex=(ey*12)+em;
 
-  if(todayMonth<=endMonth)return ['ok','সক্রিয়'];
-  if(todayMonth===endMonth+1)return ['due','Renewal Due'];
+  if(currentIndex<=endIndex)return ['ok','সক্রিয়'];
+  if(currentIndex===endIndex+1)return ['due','Renewal Due'];
   return ['exp','Expired'];
 }
 function bd(m){if(!m.dob)return false;let d=new Date(m.dob+'T00:00:00');return d.getMonth()===today.getMonth()&&d.getDate()===today.getDate()}
